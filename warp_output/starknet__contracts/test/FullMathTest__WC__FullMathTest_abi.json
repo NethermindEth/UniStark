@@ -1,0 +1,75 @@
+[
+    {
+        "members": [
+            {
+                "name": "low",
+                "offset": 0,
+                "type": "felt"
+            },
+            {
+                "name": "high",
+                "offset": 1,
+                "type": "felt"
+            }
+        ],
+        "name": "Uint256",
+        "size": 2,
+        "type": "struct"
+    },
+    {
+        "inputs": [
+            {
+                "name": "__warp_usrid0_x",
+                "type": "Uint256"
+            },
+            {
+                "name": "__warp_usrid1_y",
+                "type": "Uint256"
+            },
+            {
+                "name": "__warp_usrid2_z",
+                "type": "Uint256"
+            }
+        ],
+        "name": "mulDiv_aa9a0912",
+        "outputs": [
+            {
+                "name": "__warp_usrid3_",
+                "type": "Uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "__warp_usrid4_x",
+                "type": "Uint256"
+            },
+            {
+                "name": "__warp_usrid5_y",
+                "type": "Uint256"
+            },
+            {
+                "name": "__warp_usrid6_z",
+                "type": "Uint256"
+            }
+        ],
+        "name": "mulDivRoundingUp_0af8b27f",
+        "outputs": [
+            {
+                "name": "__warp_usrid7_",
+                "type": "Uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "constructor",
+        "outputs": [],
+        "type": "constructor"
+    }
+]

@@ -1,0 +1,29 @@
+[
+    {
+        "inputs": [
+            {
+                "name": "__warp_usrid0_x",
+                "type": "felt"
+            },
+            {
+                "name": "__warp_usrid1_y",
+                "type": "felt"
+            }
+        ],
+        "name": "addDelta_402d44fb",
+        "outputs": [
+            {
+                "name": "__warp_usrid2_z",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "constructor",
+        "outputs": [],
+        "type": "constructor"
+    }
+]
