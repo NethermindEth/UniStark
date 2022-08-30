@@ -4,6 +4,7 @@ import {expect} from 'chai';
 import { getStarknetContractFactory } from 'hardhat-warp/dist/testing'
 import { encodePriceSqrt, MIN_SQRT_RATIO, MAX_SQRT_RATIO } from './shared/utilities'
 import BN from 'bn.js'
+import { BigNumber } from 'ethers'
 
 const MIN_TICK = -887272
 const MAX_TICK = 887272
@@ -34,53 +35,48 @@ describe('TickMath', () => {
       expect(res[0].toNumber()).to.eq(4295128739)
     })
 
-    //-230 - 256
-    //res = await tickBitmap.isInitialized_2bdc2fd3(new BN(-486).toTwos(24).toString());
-    //result = Boolean(res[0].toNumber());
-    //expect(result).to.eq(false);
-
     it('min tick +1', async () => {
       const res = await tickMath.getSqrtRatioAtTick_986cfba3(new BN(MIN_TICK + 1).toTwos(24).toString());
       expect(res[0].toNumber()).to.eq(4295343490)
     })
 
     it('max tick - 1', async () => {
-      const res = await tickMath.getSqrtRatioAtTick_986cfba3(new BN(MAX_TICK - 1).toTwos(24).toString());
+      const res = await tickMath.getSqrtRatioAtTick_986cfba3(new BN(MAX_TICK - 1).toString());
       expect(res[0].toString()).to.eq("1461373636630004318706518188784493106690254656249")
     })
 
     it('min tick ratio is less than js implementation', async () => {
       const res = await tickMath.getSqrtRatioAtTick_986cfba3(new BN(MIN_TICK).toTwos(24).toString());
-      const result = encodePriceSqrt("1", (new BN(2).pow(new BN(127))).toString());
+      const result = encodePriceSqrt(1, BigNumber.from(2).pow(127))
       expect(res[0].toNumber()).to.be.lt(result.toNumber())
     })
 
-    it.only('max tick ratio is greater than js implementation', async () => {
-      const res = await tickMath.getSqrtRatioAtTick_986cfba3(new BN(MAX_TICK).toTwos(24).toString());
-      const result = encodePriceSqrt((new BN(2).pow(new BN(127))).toString(), "1");
+    it('max tick ratio is greater than js implementation', async () => {
+      const res = await tickMath.getSqrtRatioAtTick_986cfba3(new BN(MAX_TICK).toString());
+      const result = encodePriceSqrt(BigNumber.from(2).pow(127), 1);
       expect(res[0].toNumber()).to.be.lt(result.toNumber())
     })
 
     it('max tick', async () => {
-      const res = await tickMath.getSqrtRatioAtTick_986cfba3(new BN(MAX_TICK).toTwos(24).toString());
+      const res = await tickMath.getSqrtRatioAtTick_986cfba3(new BN(MAX_TICK).toString());
       expect(res[0].toString()).to.eq("1461446703485210103287273052203988822378723970342")
     })
 
     for (const absTick of [
       50,
-      //100,
-      //250,
-      //500,
-      //1_000,
-      //2_500,
-      //3_000,
-      //4_000,
-      //5_000,
-      //50_000,
-      //150_000,
-      //250_000,
-      //500_000,
-      //738_203,
+      100,
+      250,
+      500,
+      1_000,
+      2_500,
+      3_000,
+      4_000,
+      5_000,
+      50_000,
+      150_000,
+      250_000,
+      500_000,
+      738_203,
     ]) {
       for (const tick of [-absTick, absTick]) {
         describe(`tick ${tick}`, () => {
@@ -114,7 +110,7 @@ describe('TickMath', () => {
 
   describe('#MAX_SQRT_RATIO', async () => {
     it('equals #getSqrtRatioAtTick(MAX_TICK)', async () => {
-      const max = await tickMath.getSqrtRatioAtTick_986cfba3(new BN(MAX_TICK).toTwos(24).toString())
+      const max = await tickMath.getSqrtRatioAtTick_986cfba3(new BN(MAX_TICK).toString())
       const result = await tickMath.MAX_SQRT_RATIO_6d2cc304()
       expect(max[0].toString()).to.eq(result[0].toString())
       expect(max[0].toString()).to.eq(MAX_SQRT_RATIO.toString())
@@ -132,16 +128,16 @@ describe('TickMath', () => {
     })
     */
     it('ratio of min tick', async () => {
-      const result = await tickMath.getTickAtSqrtRatio_4f76c058((MIN_SQRT_RATIO).toString())
-      expect(result[0]).to.eq(MIN_TICK)
+      const result = await tickMath.getTickAtSqrtRatio_4f76c058("4295128739")
+      expect(result[0].toString()).to.eq(new BN(MIN_TICK).toTwos(24).toString())
     })
     it('ratio of min tick + 1', async () => {
       const result = await tickMath.getTickAtSqrtRatio_4f76c058('4295343490')
-      expect(result[0].toNumber()).to.eq(MIN_TICK + 1)
+      expect(result[0].toString()).to.eq(new BN(MIN_TICK + 1).toTwos(24).toString())
     })
     it('ratio of max tick - 1', async () => {
       const result = await tickMath.getTickAtSqrtRatio_4f76c058('42914613736366300043187065181887844931066902546562495343490')
-      expect(result[0].toString()).to.eq((MAX_TICK - 1).toString())
+      expect(result[0].toString()).to.eq(new BN(MAX_TICK - 1).toString())
     })
     it('ratio closest to max tick', async () => {
       const result = await tickMath.getTickAtSqrtRatio_4f76c058((MAX_SQRT_RATIO.sub(1)).toString())
@@ -149,34 +145,34 @@ describe('TickMath', () => {
     })
 
     for (const ratio of [
-      //MIN_SQRT_RATIO,
+      4295128739,
+      encodePriceSqrt(1, (new BN(10).pow(new BN(6))).toString()),
+      encodePriceSqrt(1, (new BN(10).pow(new BN(12))).toString()),
+      encodePriceSqrt(1, 64),
+      encodePriceSqrt(1, 8),
+      encodePriceSqrt(1, 2),
+      encodePriceSqrt(1, 1),
+      encodePriceSqrt(2, 1),
+      encodePriceSqrt(8, 1),
+      encodePriceSqrt(64, 1),
       encodePriceSqrt((new BN(10).pow(new BN(12))).toString(), 1),
-      //encodePriceSqrt((new BN(10).pow(new BN(6))).toString(), 1),
-      //encodePriceSqrt(1, 64),
-      //encodePriceSqrt(1, 8),
-      //encodePriceSqrt(1, 2),
-      //encodePriceSqrt(1, 1),
-      //encodePriceSqrt(2, 1),
-      //encodePriceSqrt(8, 1),
-      //encodePriceSqrt(64, 1),
-      //encodePriceSqrt(1, (new BN(10).pow(new BN(6))).toString()),
-      //encodePriceSqrt(1, (new BN(10).pow(new BN(12))).toString()),
-      //MAX_SQRT_RATIO.sub(1),
+      encodePriceSqrt((new BN(10).pow(new BN(6))).toString(), 1),
+      MAX_SQRT_RATIO.sub(1),
     ]) {
       describe(`ratio ${ratio}`, () => {
         it('is at most off by 1', async () => {
           const jsResult = new Decimal(ratio.toString()).div(new Decimal(2).pow(96)).pow(2).log(1.0001).floor()
-          const result = await tickMath.getTickAtSqrtRatio_4f76c058(ratio.toString())
-          const absDiff = new Decimal(result[0].toString()).sub(jsResult).abs()
+          const result = await tickMath.getTickAtSqrtRatio_4f76c058(new BN(ratio.toString()).toTwos(24).toString())
+          const absDiff = new Decimal(result[0].toNumber()).sub(jsResult).abs()
           expect(absDiff.toNumber()).to.be.lte(1)
         })
         
         it('ratio is between the tick and tick+1', async () => {
-          const tick = await tickMath.getTickAtSqrtRatio_4f76c058(ratio.toString())
+          const tick = await tickMath.getTickAtSqrtRatio_4f76c058(new BN(ratio.toString()).toTwos(24).toString())
           const ratioOfTick = await tickMath.getSqrtRatioAtTick_986cfba3(tick[0].toString())
           const ratioOfTickPlusOne = await tickMath.getSqrtRatioAtTick_986cfba3((tick[0].toNumber() + 1).toString())
-          expect(ratio.toNumber()).to.be.gte(ratioOfTick[0].toNumber())
-          expect(ratio.toNumber()).to.be.lt(ratioOfTickPlusOne[0].toNumber())
+          expect(ratio).to.be.gte(ratioOfTick[0].toNumber())
+          expect(ratio).to.be.lt(ratioOfTickPlusOne[0].toNumber())
         })
         /*
         it('result', async () => {
