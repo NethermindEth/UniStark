@@ -1,4 +1,5 @@
 import 'hardhat-typechain'
+import 'hardhat-warp/src/index_before'
 import '@nomiclabs/hardhat-ethers'
 import '@nomiclabs/hardhat-waffle'
 import '@nomiclabs/hardhat-etherscan'
@@ -64,7 +65,7 @@ export default {
     },
   },
   paths: {
-    warp: '../../Github/warp/bin/warp'
+    warp: '/Users/jorik/dev/nethermind/warp/bin/warp'
   },
   mocha: {
     timeout: 100000000
