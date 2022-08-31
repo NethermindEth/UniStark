@@ -12,18 +12,6 @@ contract NoDelegateCallTest is NoDelegateCall {
         return block.timestamp / 5;
     }
 
-    function getGasCostOfCanBeDelegateCalled() external view returns (uint256) {
-        uint256 gasBefore = gasleft();
-        canBeDelegateCalled();
-        return gasBefore - gasleft();
-    }
-
-    function getGasCostOfCannotBeDelegateCalled() external view returns (uint256) {
-        uint256 gasBefore = gasleft();
-        cannotBeDelegateCalled();
-        return gasBefore - gasleft();
-    }
-
     function callsIntoNoDelegateCallFunction() external view {
         noDelegateCallPrivate();
     }

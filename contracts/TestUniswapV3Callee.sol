@@ -26,7 +26,7 @@ contract TestUniswapV3Callee is IUniswapV3MintCallback, IUniswapV3SwapCallback, 
         return b;
     }
     function bytesToAddress(bytes memory b, uint240 o) private returns (address x) {
-      return address(bytesToUint(b, 0));
+      return address(bytesToUint(b, o));
     }
     function bytesToUint(bytes memory b, uint240 o) private returns (uint x) {
         uint x_uint;
