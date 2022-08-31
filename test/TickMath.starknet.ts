@@ -146,18 +146,18 @@ describe('TickMath', () => {
 
     for (const ratio of [
       4295128739,
-      encodePriceSqrt(1, (new BN(10).pow(new BN(6))).toString()),
-      encodePriceSqrt(1, (new BN(10).pow(new BN(12))).toString()),
-      encodePriceSqrt(1, 64),
-      encodePriceSqrt(1, 8),
-      encodePriceSqrt(1, 2),
-      encodePriceSqrt(1, 1),
-      encodePriceSqrt(2, 1),
-      encodePriceSqrt(8, 1),
-      encodePriceSqrt(64, 1),
-      encodePriceSqrt((new BN(10).pow(new BN(12))).toString(), 1),
-      encodePriceSqrt((new BN(10).pow(new BN(6))).toString(), 1),
-      MAX_SQRT_RATIO.sub(1),
+      79228162514264337593543950336000000,
+      79228162514264337593543950336000,
+      9903520314283042199192993792,
+      28011385487393069959365969113,
+      56022770974786139918731938227,
+      79228162514264337593543950336,
+      112045541949572279837463876454,
+      224091083899144559674927752909,
+      633825300114114700748351602688,
+      79228162514264337593543950,
+      79228162514264337593543,
+      1461446703485210103287273052203988822378723970341,
     ]) {
       describe(`ratio ${ratio}`, () => {
         it('is at most off by 1', async () => {
