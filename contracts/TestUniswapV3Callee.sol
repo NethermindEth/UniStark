@@ -122,7 +122,6 @@ contract TestUniswapV3Callee is IUniswapV3MintCallback, IUniswapV3SwapCallback, 
         address recipient,
         uint256 amount0,
         uint256 amount1,
-        address sender,
         uint256 pay0,
         uint256 pay1
     ) external {
