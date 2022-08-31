@@ -54,7 +54,7 @@ describe('TickMath', () => {
     it('max tick ratio is greater than js implementation', async () => {
       const res = await tickMath.getSqrtRatioAtTick_986cfba3(new BN(MAX_TICK).toString());
       const result = encodePriceSqrt(BigNumber.from(2).pow(127), 1);
-      expect(res[0].toNumber()).to.be.lt(result.toNumber())
+      expect(BigNumber.from(res[0].toString())).to.be.gt(result)
     })
 
     it('max tick', async () => {
@@ -136,7 +136,7 @@ describe('TickMath', () => {
       expect(result[0].toString()).to.eq(new BN(MIN_TICK + 1).toTwos(24).toString())
     })
     it('ratio of max tick - 1', async () => {
-      const result = await tickMath.getTickAtSqrtRatio_4f76c058('42914613736366300043187065181887844931066902546562495343490')
+      const result = await tickMath.getTickAtSqrtRatio_4f76c058('1461373636630004318706518188784493106690254656249')
       expect(result[0].toString()).to.eq(new BN(MAX_TICK - 1).toString())
     })
     it('ratio closest to max tick', async () => {
