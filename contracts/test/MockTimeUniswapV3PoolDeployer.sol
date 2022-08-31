@@ -43,14 +43,14 @@ contract MockTimeUniswapV3PoolDeployer is IUniswapV3PoolDeployer {
         uint24 fee,
         int24 tickSpacing
     ) external returns (address pool) {
-        bytes data = new bytes(32 * 4);
-        addressToBytes(token0, 0);
-        addressToBytes(token1, 32);
-        uintToBytes(uint(fee), 64);
-        uintToBytes(uint(tickSpacing), 96);
+        bytes memory data = new bytes(32 * 4);
+        addressToBytes(token0, 0, data);
+        addressToBytes(token1, 32, data);
+        uintToBytes(uint(fee), 64, data);
+        uintToBytes(uint(uint24(tickSpacing)), 96, data);
         parameters = Parameters({factory: factory, token0: token0, token1: token1, fee: fee, tickSpacing: tickSpacing});
         pool = address(
-            new MockTimeUniswapV3Pool{salt: keccack(data)}()
+            new MockTimeUniswapV3Pool{salt: keccak256(data)}()
         );
         emit PoolDeployed(pool);
         delete parameters;

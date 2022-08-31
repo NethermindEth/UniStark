@@ -45,7 +45,7 @@ contract UniswapV3PoolSwapTest is IUniswapV3SwapCallback {
             zeroForOne,
             amountSpecified,
             sqrtPriceLimitX96,
-            addressToBytes(msg.sender, new bytes(32))
+            addressToBytes(msg.sender, 0, new bytes(32))
         );
 
         (nextSqrtRatio, , , , , , ) = IUniswapV3Pool(pool).slot0();

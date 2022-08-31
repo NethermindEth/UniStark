@@ -35,10 +35,10 @@ contract TestUniswapV3SwapPay is IUniswapV3SwapCallback {
         uint256 pay0,
         uint256 pay1
     ) external {
-        bytes data = new bytes(32 * 3);
-        addressToBytes(msg.sender, 0);
-        uintToBytes(pay0, 32);
-        uintToBytes(pay1, 64);
+        bytes memory data = new bytes(32 * 3);
+        addressToBytes(msg.sender, 0, data);
+        uintToBytes(pay0, 32, data);
+        uintToBytes(pay1, 64, data);
         IUniswapV3Pool(pool).swap(
             recipient,
             zeroForOne,
