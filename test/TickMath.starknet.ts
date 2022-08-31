@@ -163,16 +163,16 @@ describe('TickMath', () => {
         it('is at most off by 1', async () => {
           const jsResult = new Decimal(ratio.toString()).div(new Decimal(2).pow(96)).pow(2).log(1.0001).floor()
           const result = await tickMath.getTickAtSqrtRatio_4f76c058(new BN(ratio.toString()).toTwos(24).toString())
-          const absDiff = new Decimal(result[0].toNumber()).sub(jsResult).abs()
+          const absDiff = new Decimal(result[0].toString()).sub(jsResult).abs()
           expect(absDiff.toNumber()).to.be.lte(1)
         })
         
         it('ratio is between the tick and tick+1', async () => {
           const tick = await tickMath.getTickAtSqrtRatio_4f76c058(new BN(ratio.toString()).toTwos(24).toString())
           const ratioOfTick = await tickMath.getSqrtRatioAtTick_986cfba3(tick[0].toString())
-          const ratioOfTickPlusOne = await tickMath.getSqrtRatioAtTick_986cfba3((tick[0].toNumber() + 1).toString())
-          expect(ratio).to.be.gte(ratioOfTick[0].toNumber())
-          expect(ratio).to.be.lt(ratioOfTickPlusOne[0].toNumber())
+          const ratioOfTickPlusOne = await tickMath.getSqrtRatioAtTick_986cfba3(tick[0].addn(1).toString())
+          expect(BigNumber.from(ratio)).to.be.gte(BigNumber.from(ratioOfTick[0].toString()))
+          expect(BigNumber.from(ratio)).to.be.lt(BigNumber.from(ratioOfTickPlusOne[0].toString()))
         })
         /*
         it('result', async () => {
