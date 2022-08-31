@@ -17,7 +17,7 @@ interface IUniswapV3PoolActions {
     /// @param tickLower The lower tick of the position in which to add liquidity
     /// @param tickUpper The upper tick of the position in which to add liquidity
     /// @param amount The amount of liquidity to mint
-    /// @param data Any data that should be passed through to the callback
+    /// @param data data to be sent to the callback
     /// @return amount0 The amount of token0 that was paid to mint the given amount of liquidity. Matches the value in the callback
     /// @return amount1 The amount of token1 that was paid to mint the given amount of liquidity. Matches the value in the callback
     function mint(
@@ -69,7 +69,6 @@ interface IUniswapV3PoolActions {
     /// @param amountSpecified The amount of the swap, which implicitly configures the swap as exact input (positive), or exact output (negative)
     /// @param sqrtPriceLimitX96 The Q64.96 sqrt price limit. If zero for one, the price cannot be less than this
     /// value after the swap. If one for zero, the price cannot be greater than this value after the swap
-    /// @param data Any data to be passed through to the callback
     /// @return amount0 The delta of the balance of token0 of the pool, exact when negative, minimum when positive
     /// @return amount1 The delta of the balance of token1 of the pool, exact when negative, minimum when positive
     function swap(
@@ -87,7 +86,6 @@ interface IUniswapV3PoolActions {
     /// @param recipient The address which will receive the token0 and token1 amounts
     /// @param amount0 The amount of token0 to send
     /// @param amount1 The amount of token1 to send
-    /// @param data Any data to be passed through to the callback
     function flash(
         address recipient,
         uint256 amount0,

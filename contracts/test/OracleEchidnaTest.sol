@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity =0.7.6;
+pragma solidity ^0.8.14;
 pragma abicoder v2;
 
 import './OracleTest.sol';
@@ -61,7 +61,7 @@ contract OracleEchidnaTest {
 
         (int56[] memory tickCumulatives, uint160[] memory secondsPerLiquidityCumulativeX128s) =
             oracle.observe(secondsAgos);
-        int56 timeWeightedTick = (tickCumulatives[1] - tickCumulatives[0]) / timeElapsed;
+        int56 timeWeightedTick = (tickCumulatives[1] - tickCumulatives[0]) / int56(uint56(timeElapsed));
         uint256 timeWeightedHarmonicMeanLiquidity =
             (uint256(timeElapsed) * type(uint160).max) /
                 (uint256(secondsPerLiquidityCumulativeX128s[1] - secondsPerLiquidityCumulativeX128s[0]) << 32);
@@ -99,7 +99,7 @@ contract OracleEchidnaTest {
         require(index < cardinality && index != (oracle.index() + 1) % cardinality);
 
         (uint32 blockTimestamp0, int56 tickCumulative0, , bool initialized0) =
-            oracle.observations(index == 0 ? cardinality - 1 : index - 1);
+            oracle.observations(conditional(index, cardinality));
         (uint32 blockTimestamp1, int56 tickCumulative1, , bool initialized1) = oracle.observations(index);
 
         require(initialized0);
@@ -107,7 +107,15 @@ contract OracleEchidnaTest {
 
         uint32 timeElapsed = blockTimestamp1 - blockTimestamp0;
         assert(timeElapsed > 0);
-        assert((tickCumulative1 - tickCumulative0) % timeElapsed == 0);
+        assert((tickCumulative1 - tickCumulative0) % int56(uint56(timeElapsed)) == 0);
+    }
+
+    function conditional(uint16 index, uint16 cardinality) internal pure returns (uint16) {
+        if (index == 0) {
+            return cardinality - 1;
+        } else {
+            return index - 1;
+        }
     }
 
     function checkTimeWeightedAveragesAlwaysFitsType(uint32 secondsAgo) external view {
@@ -121,8 +129,8 @@ contract OracleEchidnaTest {
 
         // compute the time weighted tick, rounded towards negative infinity
         int56 numerator = tickCumulatives[1] - tickCumulatives[0];
-        int56 timeWeightedTick = numerator / int56(secondsAgo);
-        if (numerator < 0 && numerator % int56(secondsAgo) != 0) {
+        int56 timeWeightedTick = numerator / int56(uint56(secondsAgo));
+        if (numerator < 0 && numerator % int56(uint56(secondsAgo)) != 0) {
             timeWeightedTick--;
         }
 
