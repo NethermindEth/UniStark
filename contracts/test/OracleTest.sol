@@ -91,4 +91,3 @@ contract OracleTest {
         return observations.observe(time, secondsAgos, tick, index, liquidity, cardinality);
     }
 }
-}

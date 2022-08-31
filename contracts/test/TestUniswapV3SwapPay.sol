@@ -35,10 +35,10 @@ contract TestUniswapV3SwapPay is IUniswapV3SwapCallback {
         uint256 pay0,
         uint256 pay1
     ) external {
-        bytes data = new bytes(32 * 3)
-        addressToBytes(msg.sender, 0)
-        uintToBytes(pay0, 32)
-        uintToBytes(pay1, 64)
+        bytes data = new bytes(32 * 3);
+        addressToBytes(msg.sender, 0);
+        uintToBytes(pay0, 32);
+        uintToBytes(pay1, 64);
         IUniswapV3Pool(pool).swap(
             recipient,
             zeroForOne,
@@ -53,9 +53,9 @@ contract TestUniswapV3SwapPay is IUniswapV3SwapCallback {
         int256,
         bytes calldata data
     ) external override {
-        address sender = bytesToAddress(data, 0)
-        uint pay0 = bytesToUint(data, 32)
-        uint pay1 = bytesToUint(data, 64
+        address sender = bytesToAddress(data, 0);
+        uint pay0 = bytesToUint(data, 32);
+        uint pay1 = bytesToUint(data, 64);
 
         if (pay0 > 0) {
             IERC20Minimal(IUniswapV3Pool(msg.sender).token0()).transferFrom(sender, msg.sender, uint256(pay0));
