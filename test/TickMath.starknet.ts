@@ -145,30 +145,30 @@ describe('TickMath', () => {
     })
 
     for (const ratio of [
-      4295128739,
-      79228162514264337593543950336000000,
-      79228162514264337593543950336000,
-      9903520314283042199192993792,
-      28011385487393069959365969113,
-      56022770974786139918731938227,
-      79228162514264337593543950336,
-      112045541949572279837463876454,
-      224091083899144559674927752909,
-      633825300114114700748351602688,
-      79228162514264337593543950,
-      79228162514264337593543,
-      1461446703485210103287273052203988822378723970341,
+      MIN_SQRT_RATIO,
+      encodePriceSqrt(BigNumber.from(10).pow(12), 1),
+      encodePriceSqrt(BigNumber.from(10).pow(6), 1),
+      encodePriceSqrt(1, 64),
+      encodePriceSqrt(1, 8),
+      encodePriceSqrt(1, 2),
+      encodePriceSqrt(1, 1),
+      encodePriceSqrt(2, 1),
+      encodePriceSqrt(8, 1),
+      encodePriceSqrt(64, 1),
+      encodePriceSqrt(1, BigNumber.from(10).pow(6)),
+      encodePriceSqrt(1, BigNumber.from(10).pow(12)),
+      MAX_SQRT_RATIO.sub(1),
     ]) {
       describe(`ratio ${ratio}`, () => {
         it('is at most off by 1', async () => {
           const jsResult = new Decimal(ratio.toString()).div(new Decimal(2).pow(96)).pow(2).log(1.0001).floor()
-          const result = await tickMath.getTickAtSqrtRatio_4f76c058(new BN(ratio.toString()).toTwos(24).toString())
+          const result = await tickMath.getTickAtSqrtRatio_4f76c058(ratio.toString())
           const absDiff = new Decimal(result[0].toString()).sub(jsResult).abs()
           expect(absDiff.toNumber()).to.be.lte(1)
         })
         
         it('ratio is between the tick and tick+1', async () => {
-          const tick = await tickMath.getTickAtSqrtRatio_4f76c058(new BN(ratio.toString()).toTwos(24).toString())
+          const tick = await tickMath.getTickAtSqrtRatio_4f76c058(ratio.toString())
           const ratioOfTick = await tickMath.getSqrtRatioAtTick_986cfba3(tick[0].toString())
           const ratioOfTickPlusOne = await tickMath.getSqrtRatioAtTick_986cfba3(tick[0].addn(1).toString())
           expect(BigNumber.from(ratio)).to.be.gte(BigNumber.from(ratioOfTick[0].toString()))
