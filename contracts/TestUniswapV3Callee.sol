@@ -19,7 +19,6 @@ contract TestUniswapV3Callee is IUniswapV3MintCallback, IUniswapV3SwapCallback, 
     function addressToBytes(address x, uint240 o, bytes memory b) private returns (bytes memory c) {
       return uintToBytes(uint(x), o, b);
     }
-
     function uintToBytes(uint x, uint240 o, bytes memory b) private returns (bytes memory c) {
         for (uint i = 0; i < 32; i++)
             b[o + i] = bytes1(uint8(x / (2**(8*(31 - i)))));

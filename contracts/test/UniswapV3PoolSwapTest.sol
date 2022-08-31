@@ -10,6 +10,23 @@ contract UniswapV3PoolSwapTest is IUniswapV3SwapCallback {
     int256 private _amount0Delta;
     int256 private _amount1Delta;
 
+    function addressToBytes(address x, uint240 o, bytes memory b) private returns (bytes memory c) {
+      return uintToBytes(uint(x), o, b);
+    }
+    function uintToBytes(uint x, uint240 o, bytes memory b) private returns (bytes memory c) {
+        for (uint i = 0; i < 32; i++)
+            b[o + i] = bytes1(uint8(x / (2**(8*(31 - i)))));
+        return b;
+    }
+    function bytesToAddress(bytes memory b, uint240 o) private returns (address x) {
+      return address(bytesToUint(b, o));
+    }
+    function bytesToUint(bytes memory b, uint240 o) private returns (uint x) {
+        uint x_uint;
+        for (uint i = 0; i < 32; i++)
+            x_uint += uint256(uint8(b[o + i])) << 8 * (31 - i);
+        return (x_uint);
+    }
     function getSwapResult(
         address pool,
         bool zeroForOne,
@@ -28,7 +45,7 @@ contract UniswapV3PoolSwapTest is IUniswapV3SwapCallback {
             zeroForOne,
             amountSpecified,
             sqrtPriceLimitX96,
-            abi.encode(msg.sender)
+            addressToBytes(msg.sender, new bytes(32))
         );
 
         (nextSqrtRatio, , , , , , ) = IUniswapV3Pool(pool).slot0();
@@ -39,7 +56,7 @@ contract UniswapV3PoolSwapTest is IUniswapV3SwapCallback {
         int256 amount1Delta,
         bytes calldata data
     ) external override {
-        address sender = abi.decode(data, (address));
+        address sender = bytesToAddress(data, 0);
 
         if (amount0Delta > 0) {
             IERC20Minimal(IUniswapV3Pool(msg.sender).token0()).transferFrom(sender, msg.sender, uint256(amount0Delta));
