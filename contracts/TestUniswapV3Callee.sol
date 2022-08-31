@@ -140,12 +140,11 @@ contract TestUniswapV3Callee is IUniswapV3MintCallback, IUniswapV3SwapCallback, 
         address recipient,
         uint256 amount0,
         uint256 amount1,
-        address sender,
         uint256 pay0,
         uint256 pay1
     ) external {
         bytes memory b = new bytes(32 * 3);
-        addressToBytes(sender, 0, b);
+        addressToBytes(msg.sender, 0, b);
         uintToBytes(pay0, 32, b);
         uintToBytes(pay1, 64, b);
         IUniswapV3PoolActions(pool).flash(recipient, amount0, amount1, b);
