@@ -104,7 +104,7 @@ describe('swapMath', () => {
             priceTarget.toString(),
             liquidity.toString(),
             toUint256(amount.toNumber()),
-            fee.toString()
+            fee
           )
           const sqrtQ = results[0];
           const amountIn = results[1];
@@ -126,7 +126,7 @@ describe('swapMath', () => {
           expect(sqrtQ.toString(), 'price is capped at price target').to.eq(priceTarget.toString())
           expect(sqrtQ.toNumber(), 'price is less than price after whole output amount').to.lt(priceAfterWholeOutputAmount[0].toNumber())
         })
-    /*
+    
         it('exact amount in that is fully spent in one for zero', async () => {
           const price = encodePriceSqrt(1, 1)
           const priceTarget = encodePriceSqrt(1000, 100)
@@ -140,7 +140,7 @@ describe('swapMath', () => {
             priceTarget.toString(),
             liquidity.toString(),
             toUint256(amount.toNumber()),
-            fee.toString()
+            fee
           )
           const sqrtQ = results[0];
           const amountIn = results[1];
@@ -150,19 +150,19 @@ describe('swapMath', () => {
           expect(toBN(amountIn).toString()).to.eq('999400000000000000')
           expect(toBN(feeAmount).toString()).to.eq('600000000000000')
           expect(toBN(amountOut).toString()).to.eq('666399946655997866')
-          //expect(toBN(amountIn).add(feeAmount), 'entire amount is used').to.eq(amount)
+          expect(toBN(amountIn).add(toBN(feeAmount)), 'entire amount is used').to.eq(amount)
     
           const priceAfterWholeInputAmountLessFee = await sqrtPriceMath.getNextSqrtPriceFromInput_aa58276a(
             price.toString(),
             liquidity.toString(),
-            toUint256((amount.sub(feeAmount)).toNumber()),
+            toUint256((amount.sub(BigNumber.from(feeAmount))).toNumber()),
             zeroForOne.toString()
           )
     
           expect(sqrtQ.toNumber(), 'price does not reach price target').to.be.lt(priceTarget.toNumber())
           expect(sqrtQ.toString(), 'price is equal to price after whole input amount').to.eq(priceAfterWholeInputAmountLessFee[0].toString())
         })
-    */
+    
         it('exact amount out that is fully received in one for zero', async () => {
           const price = encodePriceSqrt(1, 1)
           const priceTarget = encodePriceSqrt(10000, 100)
@@ -176,7 +176,7 @@ describe('swapMath', () => {
             priceTarget.toString(),
             liquidity.toString(),
             toUint256(amount.toNumber()),
-            fee.toString()
+            fee
           )
           const sqrtQ = results[0];
           const amountIn = results[1];
@@ -195,7 +195,7 @@ describe('swapMath', () => {
           )
     
           expect(sqrtQ.toNumber(), 'price does not reach price target').to.be.lt(priceTarget.toNumber())
-          expect(sqrtQ.toString(), 'price is less than price after whole output amount').to.eq(priceAfterWholeOutputAmount.toString())
+          expect(sqrtQ.toString(), 'price is less than price after whole output amount').to.eq(priceAfterWholeOutputAmount[0].toString())
         })
     
         it('amount out is capped at the desired amount out', async () => {
@@ -204,7 +204,7 @@ describe('swapMath', () => {
             '417332158212080721273783715441582',
             '1452870262520218020823638996',
             '159344665391607089467575320103',
-            toUint256(-1),
+            toUint256(new BN(-1).toTwos(24)),
             1
           )
 
@@ -224,7 +224,7 @@ describe('swapMath', () => {
             '2',
             '1',
             '1',
-            toUint256(3915081100057732413702495386755767),
+            toUint256('3915081100057732413702495386755767'),
             1
           )
 
@@ -233,10 +233,10 @@ describe('swapMath', () => {
           const amountOut = results[2];
           const feeAmount = results[3];
 
-          //expect(toBN(amountIn).toString()).to.eq('39614081257132168796771975168')
-          //expect(toBN(feeAmount).toString()).to.eq('39614120871253040049813')
-          //expect(toBN(amountIn).add(toBN(feeAmount)).toString()).to.be.lte('3915081100057732413702495386755767')
-          //expect(toBN(amountOut).toString()).to.eq('0')
+          expect(toBN(amountIn).toString()).to.eq('39614081257132168796771975168')
+          expect(toBN(feeAmount).toString()).to.eq('39614120871253040049813')
+          expect(BigNumber.from(toBN(amountIn).add(toBN(feeAmount)).toString())).to.be.lte(BigNumber.from('3915081100057732413702495386755767'))
+          expect(toBN(amountOut).toString()).to.eq('0')
           expect(sqrtQ.toString()).to.eq('1')
 
         })
@@ -261,7 +261,7 @@ describe('swapMath', () => {
           expect(sqrtQ.toString()).to.eq('2413')
         })
     
-        it.only('handles intermediate insufficient liquidity in zero for one exact output case', async () => {
+        it('handles intermediate insufficient liquidity in zero for one exact output case', async () => {
           const sqrtP = BigNumber.from('20282409603651670423947251286016')
           const sqrtPTarget = sqrtP.mul(11).div(10)
           const liquidity = 1024
@@ -273,8 +273,8 @@ describe('swapMath', () => {
             sqrtP.toString(),
             sqrtPTarget.toString(),
             liquidity.toString(),
-            toUint256(amountRemaining),
-            feePips.toString()
+            toUint256(new BN(amountRemaining).toTwos(24)),
+            feePips
           )
           const sqrtQ = results[0];
           const amountIn = results[1];
@@ -299,8 +299,8 @@ describe('swapMath', () => {
             sqrtP.toString(),
             sqrtPTarget.toString(),
             liquidity.toString(),
-            toUint256(amountRemaining),
-            feePips.toString()
+            toUint256(new BN(amountRemaining).toTwos(24)),
+            feePips
           )
 
           const sqrtQ = results[0];
