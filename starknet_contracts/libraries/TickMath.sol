@@ -315,8 +315,4 @@ library TickMath {
             }
         }
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> origin/SwapMath

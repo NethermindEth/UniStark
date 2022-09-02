@@ -194,11 +194,7 @@ library SqrtPriceMath {
         if (roundUp) {
             return FullMath.mulDivRoundingUp(liquidity, sqrtRatioBX96 - sqrtRatioAX96, FixedPoint96.Q96);
         } else {
-<<<<<<< HEAD
             return FullMath.mulDiv(liquidity, sqrtRatioBX96 - sqrtRatioAX96, FixedPoint96.Q96);
-=======
-            FullMath.mulDiv(liquidity, sqrtRatioBX96 - sqrtRatioAX96, FixedPoint96.Q96);
->>>>>>> origin/SwapMath
         }
     }
 
