@@ -49,7 +49,7 @@ describe('swapMath', () => {
           const liquidity = expandTo18Decimals(2)
           const amount = expandTo18Decimals(1)
           const fee = 600
-          const zeroForOne = false
+          const zeroForOne = 0;
     
           
           const results = await swapMath.computeSwapStep_100d3f74(
@@ -67,17 +67,19 @@ describe('swapMath', () => {
           expect(toBN(amountIn).toString()).to.eq('9975124224178055')
           expect(toBN(feeAmount).toString()).to.eq('5988667735148')
           expect(toBN(amountOut).toString()).to.eq('9925619580021728')
-          expect((toBN(amountIn).add(toBN(feeAmount))).toString(), 'entire amount is not used').to.lt(amount.toString())
+          const lt = toBN(amountIn).add(toBN(feeAmount)).lt(new BN(amount.toString()))
+          expect(lt, 'entire amount is not used').to.be.true;
     
           const priceAfterWholeInputAmount = await sqrtPriceMath.getNextSqrtPriceFromInput_aa58276a(
-            price.toNumber(),
-            liquidity.toNumber(),
-            toUint256(amount.toNumber()),
+            price.toString(),
+            liquidity.toString(),
+            toUint256(amount.toString()),
             zeroForOne.toString()
           )
     
-          expect(sqrtQ.toNumber(), 'price is capped at price target').to.eq(priceTarget.toNumber())
-          expect(sqrtQ.toNumber(), 'price is less than price after whole input amount').to.lt(priceAfterWholeInputAmount[0].toNumber())
+          expect(sqrtQ.toString(), 'price is capped at price target').to.eq(priceTarget.toString())
+          const price_lt = sqrtQ.lt(priceAfterWholeInputAmount[0]);
+          expect(price_lt, 'price is less than price after whole input amount').to.be.true;
         })
         
     
@@ -96,11 +98,11 @@ describe('swapMath', () => {
         //     toUint256(amount.toNumber()),
         //     fee
         //   )
-        //   const sqrtQ = results[0];
+        //   const sqrtQ = results[0]
         //   const amountIn = results[1];
         //   const amountOut = results[2];
         //   const feeAmount = results[3];
-    
+    ;
         //   expect(toBN(amountIn).toString()).to.eq('9975124224178055')
         //   expect(toBN(feeAmount).toString()).to.eq('5988667735148')
         //   expect(toBN(amountOut).toString()).to.eq('9925619580021728')
