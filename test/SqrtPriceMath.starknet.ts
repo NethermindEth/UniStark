@@ -6,7 +6,7 @@ import { encodePriceSqrt, expandTo18Decimals, MaxUint128 } from './shared/utilit
 import { getStarknetContractFactory } from 'hardhat-warp/dist/testing'
 
 var Q128 = new BN(2).pow(new BN(128))
-var MaxUint256 = new BN("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
+var MaxUint256 = new BN("115792089237316195423570985008687907853269984665640564039457584007913129639935")
 function toUint256(x: number | BN | string): Uint256 {
   var num = new BN(x);
   return {high: num.div(Q128), low: num.mod(Q128)};
@@ -65,8 +65,8 @@ describe('SqrtPriceMath', () => {
 
     it('returns the minimum price for max inputs', async () => {
       const sqrtP = new BN(2).pow(new BN(160)).sub(new BN(1))
-      const liquidity = MaxUint128
-      const maxAmountNoOverflow = MaxUint256.sub(new BN(liquidity.shl(96).div(sqrtP.toNumber()).toNumber()))
+      const liquidity = new BN(2).pow(new BN(128)).sub(new BN(1));
+      const maxAmountNoOverflow = MaxUint256.sub(liquidity.shln(96).div(sqrtP));
       const res = await sqrtPriceMath.getNextSqrtPriceFromInput_aa58276a(sqrtP.toString(), liquidity.toString(), toUint256(maxAmountNoOverflow.toString()), 1)
       expect(res[0].toString()).to.eq('1')
     })
@@ -374,19 +374,19 @@ describe('SqrtPriceMath', () => {
     // })
   })
 
-  describe('swap computation', () => {
-    it('sqrtP * sqrtQ overflows', async () => {
-      // getNextSqrtPriceInvariants(1025574284609383690408304870162715216695788925244,50015962439936049619261659728067971248,406,true)
-      const sqrtP = '1025574284609383690408304870162715216695788925244'
-      const liquidity = '50015962439936049619261659728067971248'
-      const zeroForOne = 1
-      const amountIn = '406'
+  // describe('swap computation', () => {
+  //   it('sqrtP * sqrtQ overflows', async () => {
+  //     // getNextSqrtPriceInvariants(1025574284609383690408304870162715216695788925244,50015962439936049619261659728067971248,406,true)
+  //     const sqrtP = '1025574284609383690408304870162715216695788925244'
+  //     const liquidity = '50015962439936049619261659728067971248'
+  //     const zeroForOne = 1
+  //     const amountIn = '406'
 
-      const sqrtQ = await sqrtPriceMath.getNextSqrtPriceFromInput_aa58276a(sqrtP, liquidity, toUint256(amountIn), zeroForOne)
-      expect(sqrtQ[0].toString()).to.eq('1025574284609383582644711336373707553698163132913')
+  //     const sqrtQ = await sqrtPriceMath.getNextSqrtPriceFromInput_aa58276a(sqrtP, liquidity, toUint256(amountIn), zeroForOne)
+  //     expect(sqrtQ[0].toString()).to.eq('1025574284609383582644711336373707553698163132913')
 
-      const amount0Delta = await sqrtPriceMath.getAmount0Delta_2c32d4b6(sqrtQ[0], sqrtP, liquidity, 1)
-      expect(Uint256toString(amount0Delta[0])).to.eq('406')
-    })
-  })
+  //     const amount0Delta = await sqrtPriceMath.getAmount0Delta_2c32d4b6(sqrtQ[0], sqrtP, liquidity, 1)
+  //     expect(Uint256toString(amount0Delta[0])).to.eq('406')
+  //   })
+  // })
 })
