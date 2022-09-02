@@ -42,118 +42,119 @@ describe('swapMath', () => {
 
     describe('#computeSwapStep', () => {
 
-        it('exact amount in that gets capped at price target in one for zero', async () => {
+        // it('exact amount in that gets capped at price target in one for zero', async () => {
           
-          const price = encodePriceSqrt(1, 1)
-          const priceTarget = encodePriceSqrt(101, 100)
-          const liquidity = expandTo18Decimals(2)
-          const amount = expandTo18Decimals(1)
-          const fee = 600
-          const zeroForOne = 0;
-    
-          
-          const results = await swapMath.computeSwapStep_100d3f74(
-            price.toString(),
-            priceTarget.toString(),
-            liquidity.toString(),
-            toUint256(amount.toString()),
-            fee.toString()
-          )
-          const sqrtQ = results[0];
-          const amountIn = results[1];
-          const amountOut = results[2];
-          const feeAmount = results[3];
-    
-          expect(toBN(amountIn).toString()).to.eq('9975124224178055')
-          expect(toBN(feeAmount).toString()).to.eq('5988667735148')
-          expect(toBN(amountOut).toString()).to.eq('9925619580021728')
-          const lt = toBN(amountIn).add(toBN(feeAmount)).lt(new BN(amount.toString()))
-          expect(lt, 'entire amount is not used').to.be.true;
-    
-          const priceAfterWholeInputAmount = await sqrtPriceMath.getNextSqrtPriceFromInput_aa58276a(
-            price.toString(),
-            liquidity.toString(),
-            toUint256(amount.toString()),
-            zeroForOne.toString()
-          )
-    
-          expect(sqrtQ.toString(), 'price is capped at price target').to.eq(priceTarget.toString())
-          const price_lt = sqrtQ.lt(priceAfterWholeInputAmount[0]);
-          expect(price_lt, 'price is less than price after whole input amount').to.be.true;
-        })
-        
-    
-        // it('exact amount out that gets capped at price target in one for zero', async () => {
         //   const price = encodePriceSqrt(1, 1)
         //   const priceTarget = encodePriceSqrt(101, 100)
         //   const liquidity = expandTo18Decimals(2)
-        //   const amount = expandTo18Decimals(1).mul(-1)
-        //   const fee = 600
-        //   const zeroForOne = false
-  
-        //   const results = await swapMath.computeSwapStep_100d3f74(
-        //     price.toString(),
-        //     priceTarget.toString(),
-        //     liquidity.toString(),
-        //     toUint256(amount.toNumber()),
-        //     fee
-        //   )
-        //   const sqrtQ = results[0]
-        //   const amountIn = results[1];
-        //   const amountOut = results[2];
-        //   const feeAmount = results[3];
-    ;
-        //   expect(toBN(amountIn).toString()).to.eq('9975124224178055')
-        //   expect(toBN(feeAmount).toString()).to.eq('5988667735148')
-        //   expect(toBN(amountOut).toString()).to.eq('9925619580021728')
-        //   expect(toBN(amountOut).toString(), 'entire amount out is not returned').to.lt(amount.mul(-1))
-    
-        //   const priceAfterWholeOutputAmount = await sqrtPriceMath.getNextSqrtPriceFromInput_aa58276a(
-        //     price.toString(),
-        //     liquidity.toString(),
-        //     toUint256(amount.toNumber()),
-        //     zeroForOne.toString()
-        //   )
-    
-        //   expect(sqrtQ.toString(), 'price is capped at price target').to.eq(priceTarget.toString())
-        //   expect(sqrtQ.toNumber(), 'price is less than price after whole output amount').to.lt(priceAfterWholeOutputAmount[0].toNumber())
-        // })
-    
-        // it('exact amount in that is fully spent in one for zero', async () => {
-        //   const price = encodePriceSqrt(1, 1)
-        //   const priceTarget = encodePriceSqrt(1000, 100)
-        //   const liquidity = expandTo18Decimals(2)
         //   const amount = expandTo18Decimals(1)
         //   const fee = 600
-        //   const zeroForOne = false
+        //   const zeroForOne = 0;
     
+          
         //   const results = await swapMath.computeSwapStep_100d3f74(
         //     price.toString(),
         //     priceTarget.toString(),
         //     liquidity.toString(),
-        //     toUint256(amount.toNumber()),
-        //     fee
+        //     toUint256(amount.toString()),
+        //     fee.toString()
         //   )
         //   const sqrtQ = results[0];
         //   const amountIn = results[1];
         //   const amountOut = results[2];
         //   const feeAmount = results[3];
     
-        //   expect(toBN(amountIn).toString()).to.eq('999400000000000000')
-        //   expect(toBN(feeAmount).toString()).to.eq('600000000000000')
-        //   expect(toBN(amountOut).toString()).to.eq('666399946655997866')
-        //   expect(toBN(amountIn).add(toBN(feeAmount)), 'entire amount is used').to.eq(amount)
+        //   expect(toBN(amountIn).toString()).to.eq('9975124224178055')
+        //   expect(toBN(feeAmount).toString()).to.eq('5988667735148')
+        //   expect(toBN(amountOut).toString()).to.eq('9925619580021728')
+        //   const lt = toBN(amountIn).add(toBN(feeAmount)).lt(new BN(amount.toString()))
+        //   expect(lt, 'entire amount is not used').to.be.true;
     
-        //   const priceAfterWholeInputAmountLessFee = await sqrtPriceMath.getNextSqrtPriceFromInput_aa58276a(
+        //   const priceAfterWholeInputAmount = await sqrtPriceMath.getNextSqrtPriceFromInput_aa58276a(
         //     price.toString(),
         //     liquidity.toString(),
-        //     toUint256((amount.sub(BigNumber.from(feeAmount))).toNumber()),
+        //     toUint256(amount.toString()),
         //     zeroForOne.toString()
         //   )
     
-        //   expect(sqrtQ.toNumber(), 'price does not reach price target').to.be.lt(priceTarget.toNumber())
-        //   expect(sqrtQ.toString(), 'price is equal to price after whole input amount').to.eq(priceAfterWholeInputAmountLessFee[0].toString())
+        //   expect(sqrtQ.toString(), 'price is capped at price target').to.eq(priceTarget.toString())
+        //   const price_lt = sqrtQ.lt(priceAfterWholeInputAmount[0]);
+        //   expect(price_lt, 'price is less than price after whole input amount').to.be.true;
         // })
+        
+    
+         it('exact amount out that gets capped at price target in one for zero', async () => {
+           const price = encodePriceSqrt(1, 1);
+           const priceTarget = encodePriceSqrt(101, 100);
+           const liquidity = expandTo18Decimals(2);
+           const amount = expandTo18Decimals(1).mul(-1).toTwos(256);
+           const fee = 600;
+           const zeroForOne = 0;
+  
+           const results = await swapMath.computeSwapStep_100d3f74(
+             price.toString(),
+             priceTarget.toString(),
+             liquidity.toString(),
+             toUint256(amount.toString()),
+             fee.toString()
+           )
+           const sqrtQ = results[0];
+           const amountIn = results[1];
+           const amountOut = results[2];
+           const feeAmount = results[3];
+           expect(toBN(amountIn).toString()).to.eq('9975124224178055')
+           expect(toBN(feeAmount).toString()).to.eq('5988667735148')
+           expect(toBN(amountOut).toString()).to.eq('9925619580021728')
+           expect(toBN(amountOut).toString(), 'entire amount out is not returned').to.lt(amount.mul(-1).toTwos(256));
+   
+           const priceAfterWholeOutputAmount = await sqrtPriceMath.getNextSqrtPriceFromInput_aa58276a(
+             price.toString(),
+             liquidity.toString(),
+             toUint256(amount.toString()),
+             zeroForOne.toString()
+           )
+    
+           expect(sqrtQ.toString(), 'price is capped at price target').to.eq(priceTarget.toString())
+           const sqrtQ_lt = sqrtQ.lt(priceAfterWholeOutputAmount[0]);
+           expect(sqrtQ_lt, 'price is less than price after whole output amount').to.be.true;
+         })
+    
+        //  it('exact amount in that is fully spent in one for zero', async () => {
+        //    const price = encodePriceSqrt(1, 1)
+        //    const priceTarget = encodePriceSqrt(1000, 100)
+        //    const liquidity = expandTo18Decimals(2)
+        //    const amount = expandTo18Decimals(1)
+        //    const fee = 600
+        //    const zeroForOne = 0
+   
+        //    const results = await swapMath.computeSwapStep_100d3f74(
+        //      price.toString(),
+        //      priceTarget.toString(),
+        //      liquidity.toString(),
+        //      toUint256(amount.toString()),
+        //      fee
+        //    )
+        //    const sqrtQ = results[0];
+        //    const amountIn = results[1];
+        //    const amountOut = results[2];
+        //    const feeAmount = results[3];
+    
+        //    expect(toBN(amountIn).toString()).to.eq('999400000000000000')
+        //    expect(toBN(feeAmount).toString()).to.eq('600000000000000')
+        //    expect(toBN(amountOut).toString()).to.eq('666399946655997866')
+        //    expect(toBN(amountIn).add(toBN(feeAmount)), 'entire amount is used').to.eq(amount)
+   
+        //    const priceAfterWholeInputAmountLessFee = await sqrtPriceMath.getNextSqrtPriceFromInput_aa58276a(
+        //      price.toString(),
+        //      liquidity.toString(),
+        //      toUint256((amount.sub(BigNumber.from(feeAmount))).toString()),
+        //      zeroForOne.toString()
+        //    )
+    
+        //   const sqrtQ_lt = sqrtQ.lt(new BN(priceTarget.toString()));
+        //    expect(sqrtQ_lt, 'price does not reach price target').to.be.true;
+        //    expect(sqrtQ.toString(), 'price is equal to price after whole input amount').to.eq(priceAfterWholeInputAmountLessFee[0].toString())
+        //  })
     
         // it('exact amount out that is fully received in one for zero', async () => {
         //   const price = encodePriceSqrt(1, 1)
@@ -161,7 +162,7 @@ describe('swapMath', () => {
         //   const liquidity = expandTo18Decimals(2)
         //   const amount = expandTo18Decimals(1).mul(-1)
         //   const fee = 600
-        //   const zeroForOne = false
+        //   const zeroForOne = 0
 
         //   const results = await swapMath.computeSwapStep_100d3f74(
         //     price.toString(),
