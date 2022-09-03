@@ -1,11 +1,25 @@
-import { BigNumber } from 'ethers'
+import { BigNumber, BigNumberish } from 'ethers'
 import { ethers } from 'hardhat'
 import { SwapMathTest } from '../typechain/SwapMathTest'
-
+import bn from 'bignumber.js'
 import { expect } from './shared/expect'
 import snapshotGasCost from './shared/snapshotGasCost'
-import { encodePriceSqrt, expandTo18Decimals } from './shared/utilities'
 import { SqrtPriceMathTest } from '../typechain/SqrtPriceMathTest'
+
+export function encodePriceSqrt(reserve1: BigNumberish, reserve0: BigNumberish): BigNumber {
+  return BigNumber.from(
+    new bn(reserve1.toString())
+      .div(reserve0.toString())
+      .sqrt()
+      .multipliedBy(new bn(2).pow(96))
+      .integerValue(3)
+      .toString()
+  )
+}
+
+export function expandTo18Decimals(n: number): BigNumber {
+  return BigNumber.from(n).mul(BigNumber.from(10).pow(18))
+}
 
 describe('SwapMath', () => {
   let swapMath: SwapMathTest

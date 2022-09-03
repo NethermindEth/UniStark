@@ -40,10 +40,9 @@ library SqrtPriceMath {
                 uint256 product;
                 if ((product = amount * sqrtPX96) / amount == sqrtPX96) {
                     uint256 denominator = numerator1 + product;
-                    if (denominator >= numerator1) {
+                    if (denominator >= numerator1)
                         // always fits in 160 bits
                         return uint160(FullMath.mulDivRoundingUp(numerator1, sqrtPX96, denominator));
-                    }
                 }
 
                 return uint160(UnsafeMath.divRoundingUp(numerator1, (numerator1 / sqrtPX96).add(amount)));
@@ -74,28 +73,30 @@ library SqrtPriceMath {
         uint256 amount,
         bool add
     ) internal pure returns (uint160) {
-        // if we're adding (subtracting), rounding down requires rounding the quotient down (up)
-        // in both cases, avoid a mulDiv for most inputs
-        if (add) {
-            uint256 quotient = 0;
-            if (amount <= type(uint160).max) {
-                quotient = (amount << FixedPoint96.RESOLUTION) / liquidity;
-            } else {
-                quotient = FullMath.mulDiv(amount, FixedPoint96.Q96, liquidity);
-            }
+        unchecked {
+            // if we're adding (subtracting), rounding down requires rounding the quotient down (up)
+            // in both cases, avoid a mulDiv for most inputs
+            if (add) {
+                uint256 quotient = 0;
+                if (amount <= type(uint160).max) {
+                    quotient = (amount << FixedPoint96.RESOLUTION) / liquidity;
+                } else {
+                    quotient = FullMath.mulDiv(amount, FixedPoint96.Q96, liquidity);
+                }
 
-            return uint256(sqrtPX96).add(quotient).toUint160();
-        } else {
-            uint256 quotient = 0;
-            if (amount <= type(uint160).max) {
-                quotient = UnsafeMath.divRoundingUp(amount << FixedPoint96.RESOLUTION, liquidity);
+                return uint256(sqrtPX96).add(quotient).toUint160();
             } else {
-                quotient = FullMath.mulDivRoundingUp(amount, FixedPoint96.Q96, liquidity);
-            }
+                uint256 quotient = 0;
+                if (amount <= type(uint160).max) {
+                    quotient = UnsafeMath.divRoundingUp(amount << FixedPoint96.RESOLUTION, liquidity);
+                } else {
+                    quotient = FullMath.mulDivRoundingUp(amount, FixedPoint96.Q96, liquidity);
+                }
 
-            require(sqrtPX96 > quotient);
-            // always fits 160 bits
-            return uint160(sqrtPX96 - quotient);
+                require(sqrtPX96 > quotient);
+                // always fits 160 bits
+                return uint160(sqrtPX96 - quotient);
+            }
         }
     }
 
