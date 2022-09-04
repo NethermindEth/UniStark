@@ -159,7 +159,7 @@ describe('TickMath', () => {
       const result = await tickMath.getTickAtSqrtRatio_4f76c058((MAX_SQRT_RATIO.sub(1)).toString())
       expect(result[0].toNumber()).to.eq(MAX_TICK - 1)
     })
-/*
+
     for (const ratio of [
       MIN_SQRT_RATIO,
       encodePriceSqrt((BigNumber.from(10).pow(12)).toString(), 1),
@@ -197,8 +197,8 @@ describe('TickMath', () => {
         
         it('gas', async () => {
           await snapshotGasCost(tickMath.getGasCostOfgetTickAtSqrtRatio_4f76c058(ratio))
-        })
+        })*/
       })
-    }*/
+    }
   })
 })
