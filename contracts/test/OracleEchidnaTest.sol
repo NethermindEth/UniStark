@@ -89,8 +89,8 @@ contract OracleEchidnaTest {
         }
         uint32[] memory arr = new uint32[](1);
         arr[0] = 0;
-        (bool success, ) = address(oracle).staticcall(abi.encodeWithSelector(OracleTest.observe.selector, arr));
-        return success;
+        oracle.observe(arr);
+        return true;
     }
 
     function checkTwoAdjacentObservationsTickCumulativeModTimeElapsedAlways0(uint16 index) external view {
