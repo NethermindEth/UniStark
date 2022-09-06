@@ -12,7 +12,7 @@ describe('BitMath', () => {
     return (await factory.deploy()) as BitMathTest
   }
   beforeEach('deploy BitMathTest', async () => {
-    bitMath = await loadFixture(fixture)
+    bitMath = await waffle.loadFixture(fixture)
   })
 
   describe('#mostSignificantBit', () => {
