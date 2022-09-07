@@ -28,7 +28,6 @@ import {
   SwapToPriceFunction,
 } from './shared/utilities'
 import { TestUniswapV3Callee } from '../typechain/TestUniswapV3Callee'
-import { TestUniswapV3ReentrantCallee } from '../typechain/TestUniswapV3ReentrantCallee'
 import { TickMathTest } from '../typechain/TickMathTest'
 import { SwapMathTest } from '../typechain/SwapMathTest'
 
@@ -1677,21 +1676,21 @@ describe('UniswapV3Pool', () => {
     })
   })
 
-  describe('#lock', () => {
-    beforeEach('initialize the pool', async () => {
-      await pool.initialize(encodePriceSqrt(1, 1))
-      await mint(wallet.address, minTick, maxTick, expandTo18Decimals(1))
-    })
+//   describe('#lock', () => {
+//     beforeEach('initialize the pool', async () => {
+//       await pool.initialize(encodePriceSqrt(1, 1))
+//       await mint(wallet.address, minTick, maxTick, expandTo18Decimals(1))
+//     })
 
-    it('cannot reenter from swap callback', async () => {
-      const reentrant = (await (
-        await ethers.getContractFactory('TestUniswapV3ReentrantCallee')
-      ).deploy()) as TestUniswapV3ReentrantCallee
+//     it('cannot reenter from swap callback', async () => {
+//       const reentrant = (await (
+//         await ethers.getContractFactory('TestUniswapV3ReentrantCallee')
+//       ).deploy()) as TestUniswapV3ReentrantCallee
 
-      // the tests happen in solidity
-      await expect(reentrant.swapToReenter(pool.address)).to.be.revertedWith('Unable to reenter')
-    })
-  })
+//       // the tests happen in solidity
+//       await expect(reentrant.swapToReenter(pool.address)).to.be.revertedWith('Unable to reenter')
+//     })
+//   })
 
   describe('#snapshotCumulativesInside', () => {
     const tickLower = -TICK_SPACINGS[FeeAmount.MEDIUM]
