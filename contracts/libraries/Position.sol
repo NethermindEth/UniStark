@@ -24,31 +24,20 @@ library Position {
     /// warp-cairo
     /// func CURRENTFUNC(){
     ///    range_check_ptr: felt,
-    ///    bitwise_ptr: BitwiseBuiltin*,
-    ///    warp_memory: DictAccess*,
-    ///    keccak_ptr: felt*,
+    ///    pedersen_ptr: HashBuiltin*,
     ///}(
     ///     owner : felt,
     ///     tickLower : felt,
     ///     tickUpper : felt,
-    /// ) -> (res: Uint256):
+    /// ) -> (res: Uint256){
     ///     from starkware.cairo.common.hash import hash2
     ///     from warplib.maths.utils import felt_to_uint256
-    ///     let (hash_res_1) = hash2{hash_ptr=pedersen_ptr}(owner, tickLower)
-    ///     let (hash_res_2) = hash2{hash_ptr=pedersen_ptr}(hash_res_1, tickUpper)
-    ///     let (res: Uint256) = felt_to_uint256(hash_res_2)
-
-    ///     #from warplib.memory import wm_new, wm_write_felt
-    ///     #let (arr) = wm_new(Uint256(3, 0), Uint256(1,0))
-    ///     #wm_write_felt(arr + 2, owner)
-    ///     #wm_write_felt(arr + 3, tickLower)
-    ///     #wm_write_felt(arr + 4, tickUpper)
-    ///     #let (res) = warp_keccak(arr)
-    ///     return (res)
-    ///end
+    ///     let (hash_res_1) = hash2{hash_ptr=pedersen_ptr}(owner, tickLower);
+    ///     let (hash_res_2) = hash2{hash_ptr=pedersen_ptr}(hash_res_1, tickUpper);
+    ///     let (res: Uint256) = felt_to_uint256(hash_res_2);
+    ///     return (res,);
+    ///}
     function hash_stub_0(address owner, int24 tickLower, int24 tickUpper) internal view returns (bytes32) {
-        // bytes memory x = new bytes(0);
-        // keccak256(x);
         return 0;
     }
 
