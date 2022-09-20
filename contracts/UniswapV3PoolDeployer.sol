@@ -48,7 +48,7 @@ contract UniswapV3PoolDeployer is IUniswapV3PoolDeployer {
     /// ) -> (res: Uint256){
     ///     from starkware.cairo.common.hash import hash2
     ///     from warplib.maths.utils import felt_to_uint256
-    ///     from starkware.cairo.common.cairo_builtins import pedersen_ptr
+    ///     from starkware.cairo.common.cairo_builtins import HashBuiltin
     ///     let (hash_res_1) = hash2{hash_ptr=pedersen_ptr}(token0, token1);
     ///     let (hash_res_2) = hash2{hash_ptr=pedersen_ptr}(hash_res_1, fee);
     ///     let (res: Uint256) = felt_to_uint256(hash_res_2);
