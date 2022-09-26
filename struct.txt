@@ -1,0 +1,2 @@
+
+ StructDefinition(full_name=ScopedName(path=('starkware', 'starknet', 'common', 'syscalls', 'GetCallerAddress')), members={'request': MemberDefinition(offset=0, cairo_type=TypeStruct(scope=ScopedName(path=('starkware', 'starknet', 'common', 'syscalls', 'GetCallerAddressRequest')), location=:1:1), location=None), 'response': MemberDefinition(offset=1, cairo_type=TypeStruct(scope=ScopedName(path=('starkware', 'starknet', 'common', 'syscalls', 'GetCallerAddressResponse')), location=:1:1), location=None)}, size=2, location=None)

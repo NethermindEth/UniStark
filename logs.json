@@ -1,0 +1,36 @@
+yarn run v1.22.19
+$ hardhat test test/test.ts
+HARDHAT_WARP
+TASK_GET_COMPILATION_TASKS
+[ 'compile:solidity' ]
+[1m[34m
+Compiling Ethereum contracts: 
+[39m[22m
+Creating Typechain artifacts in directory typechain for target ethers-v5
+Successfully generated Typechain artifacts!
+
+
+  Token contract
+    1) Deployment should assign the total supply of tokens to the owner
+
+
+  0 passing (353ms)
+  1 failing
+
+  1) Token contract
+       Deployment should assign the total supply of tokens to the owner:
+     TypeError: Url must be a string. Received undefined
+      at normalize (/Users/gregvardy/dev/nethermind/hardhat-warp/node_modules/url-join/lib/url-join.js:12:13)
+      at /Users/gregvardy/dev/nethermind/hardhat-warp/node_modules/url-join/lib/url-join.js:75:12
+      at buildUrl (/Users/gregvardy/dev/nethermind/hardhat-warp/node_modules/starknet/dist/utils/url.js:47:66)
+      at new SequencerProvider (/Users/gregvardy/dev/nethermind/hardhat-warp/node_modules/starknet/dist/provider/sequencer.js:93:56)
+      at Account.Provider (/Users/gregvardy/dev/nethermind/hardhat-warp/node_modules/starknet/dist/provider/default.js:51:29)
+      at new Account (/Users/gregvardy/dev/nethermind/hardhat-warp/node_modules/starknet/dist/account/default.js:77:28)
+      at ContractFactory.connectStarkNetDevNetAccounts (/Users/gregvardy/dev/nethermind/hardhat-warp/src/ethers/ContractFactory.ts:101:54)
+      at processTicksAndRejections (node:internal/process/task_queues:96:5)
+      at Proxy.hre.ethers.getContractFactory (/Users/gregvardy/dev/nethermind/hardhat-warp/src/index.ts:72:5)
+      at Context.<anonymous> (test/test.ts:26:67)
+
+
+
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.

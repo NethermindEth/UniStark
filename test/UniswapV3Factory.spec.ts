@@ -1,5 +1,6 @@
-import { Wallet } from 'ethers'
+import { BigNumber, Wallet } from 'ethers'
 import { ethers, waffle } from 'hardhat'
+import {Signer} from 'starknet';
 import { UniswapV3Factory } from '../typechain/UniswapV3Factory'
 import { expect } from './shared/expect'
 import snapshotGasCost from './shared/snapshotGasCost'
@@ -22,12 +23,13 @@ describe('UniswapV3Factory', () => {
   let poolBytecode: string
   const fixture = async () => {
     const factoryFactory = await ethers.getContractFactory('UniswapV3Factory')
+    console.log(factoryFactory)
     return (await factoryFactory.deploy()) as UniswapV3Factory
   }
 
   let loadFixture: ReturnType<typeof createFixtureLoader>
   before('create fixture loader', async () => {
-    ;[wallet, other] = await (ethers as any).getSigners()
+    [wallet, other] = await (ethers as any).getSigners()
 
     loadFixture = createFixtureLoader([wallet, other])
   })
@@ -41,7 +43,9 @@ describe('UniswapV3Factory', () => {
   })
 
   it('owner is deployer', async () => {
-    expect(await factory.owner()).to.eq(wallet.address)
+    const owner = await factory.owner();
+    console.log(owner)
+    expect(owner).to.eq(wallet.address)
   })
 
   it('factory bytecode size', async () => {

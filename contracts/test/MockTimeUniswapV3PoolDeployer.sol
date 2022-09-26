@@ -13,10 +13,20 @@ contract MockTimeUniswapV3PoolDeployer is IUniswapV3PoolDeployer {
         uint24 fee;
         int24 tickSpacing;
     }
+    address public owner;
 
     Parameters public override parameters;
 
     event PoolDeployed(address pool);
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    function setOwner() external returns (address) {
+        owner = msg.sender;
+        return owner;
+    }
 
     function addressToBytes(address x, uint240 o, bytes memory b) private returns (bytes memory c) {
       return uintToBytes(uint(x), o, b);
@@ -43,6 +53,7 @@ contract MockTimeUniswapV3PoolDeployer is IUniswapV3PoolDeployer {
         uint24 fee,
         int24 tickSpacing
     ) external returns (address pool) {
+        owner = msg.sender;
         bytes memory data = new bytes(32 * 4);
         addressToBytes(token0, 0, data);
         addressToBytes(token1, 32, data);
