@@ -5,21 +5,6 @@ import '../libraries/SwapMath.sol';
 
 contract SwapMathTest {
 
-    // Remove everything between these two lines once bug is fixed
-    using SafeCast for uint256;
-    using LowGasSafeMath for uint256;
-    using UnsafeMath for uint256;
-
-    function avoidBugs() external pure {
-        uint256 x;
-        uint256 y;
-
-        x.toUint160();
-        x.add(y);
-        x.divRoundingUp(y);
-    }
-    // 
-
     function computeSwapStep(
         uint160 sqrtP,
         uint160 sqrtPTarget,
