@@ -25,9 +25,9 @@ describe('Token contract', function () {
     [wallet, other] = await (ethers as any).getSigners()
     const MockTimeUniswapV3PoolDeployerFactory: ContractFactory = await ethers.getContractFactory('MockTimeUniswapV3PoolDeployer')
     const mockTimePoolDeployer = (await MockTimeUniswapV3PoolDeployerFactory.connect(wallet).deploy())
-    console.log(await mockTimePoolDeployer.connect(wallet).setOwner());
+    console.log(mockTimePoolDeployer.address)
+    // console.log(await mockTimePoolDeployer.owner());
 
-    // console.log(mockTimePoolDeployer.address)
     // const tx = await mockTimePoolDeployer.connect(wallet).deploy(
     //   '0x071de96cc10e76bef0ae4f25d778e7068b513be616a5f45f3499d5a79db3e81c',
     //   '0x1',
