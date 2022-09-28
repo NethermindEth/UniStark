@@ -7,7 +7,7 @@ describe('Token contract', function () {
     [wallet, other] = await (ethers as any).getSigners();
     const AccountTest: ContractFactory = await ethers.getContractFactory('AccountTest');
     const accountTest = (await AccountTest.connect(wallet).deploy());
-    await accountTest.connect(wallet).setOwner();
-    console.log(await accountTest.owner())
+    await accountTest.connect(other).setOwner();
+    console.log(await accountTest.owner());
   });
 });
