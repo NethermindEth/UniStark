@@ -1305,10 +1305,12 @@ describe('UniswapV3Pool', () => {
   describe('#tickSpacing', () => {
     describe('tickSpacing = 12', () => {
       beforeEach('deploy pool', async () => {
+        console.log("CREATING POOL WITH AMOUNT", FeeAmount.MEDIUM, 12)
         pool = await createPool(FeeAmount.MEDIUM, 12)
       })
       describe('post initialize', () => {
         beforeEach('initialize pool', async () => {
+          console.log("Initialising pool with encodePriceSqrt(1, 1)")
           await pool.initialize(encodePriceSqrt(1, 1))
         })
         it('mint can only be called for multiples of 12', async () => {
@@ -1346,14 +1348,16 @@ describe('UniswapV3Pool', () => {
   })
 
   // https://github.com/Uniswap/uniswap-v3-core/issues/214
-  it('tick transition cannot run twice if zero for one swap ends at fractional price just below tick', async () => {
+  it.only('tick transition cannot run twice if zero for one swap ends at fractional price just below tick', async () => {
     pool = await createPool(FeeAmount.MEDIUM, 1)
     const sqrtTickMath = (await (await ethers.getContractFactory('TickMathTest')).deploy()) as TickMathTest
     const swapMath = (await (await ethers.getContractFactory('SwapMathTest')).deploy()) as SwapMathTest
     const p0 = (await sqrtTickMath.getSqrtRatioAtTick(-24081)).add(1)
     // initialize at a price of ~0.3 token1/token0
     // meaning if you swap in 2 token0, you should end up getting 0 token1
+    console.log("Calling pool initialize")
     await pool.initialize(p0)
+    console.log("Calling pool liquidity")
     expect(await pool.liquidity(), 'current pool liquidity is 1').to.eq(0)
     expect((await pool.slot0()).tick, 'pool tick is -24081').to.eq(-24081)
 
