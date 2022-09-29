@@ -1,0 +1,162 @@
+Before to etheresTransaction
+    1) tick transition cannot run twice if zero for one swap ends at fractional price just below tick
+    #initialize
+[ 'MockTimeUniswapV3Pool' ]
+Declared
+deploying warp_output/contracts/test/MockTimeUniswapV3PoolDeployer__WC__MockTimeUniswapV3PoolDeployer.cairo
+0x14
+deployed
+{ cairoFuncName: 'deploy_fad5359f' }
+INVOKE FUNCTION
+Before to etheresTransaction
+To ethers conversion happened
+Going to encode
+Encode is done
+{ cairoFuncName: 'initialize_f637731d' }
+INVOKE FUNCTION
+Before to etheresTransaction
+To ethers conversion happened
+{ cairoFuncName: 'initialize_f637731d' }
+INVOKE FUNCTION
+Before to etheresTransaction
+      ✓ fails if already initialized (2955ms)
+[ 'MockTimeUniswapV3Pool' ]
+Declared
+deploying warp_output/contracts/test/MockTimeUniswapV3PoolDeployer__WC__MockTimeUniswapV3PoolDeployer.cairo
+0x17
+deployed
+{ cairoFuncName: 'deploy_fad5359f' }
+INVOKE FUNCTION
+Before to etheresTransaction
+To ethers conversion happened
+Going to encode
+Encode is done
+{ cairoFuncName: 'initialize_f637731d' }
+INVOKE FUNCTION
+Before to etheresTransaction
+{ cairoFuncName: 'initialize_f637731d' }
+INVOKE FUNCTION
+Before to etheresTransaction
+      ✓ fails if starting price is too low (254ms)
+[ 'MockTimeUniswapV3Pool' ]
+Declared
+deploying warp_output/contracts/test/MockTimeUniswapV3PoolDeployer__WC__MockTimeUniswapV3PoolDeployer.cairo
+0x1b
+deployed
+{ cairoFuncName: 'deploy_fad5359f' }
+INVOKE FUNCTION
+Before to etheresTransaction
+To ethers conversion happened
+Going to encode
+Encode is done
+{ cairoFuncName: 'initialize_f637731d' }
+INVOKE FUNCTION
+Before to etheresTransaction
+{ cairoFuncName: 'initialize_f637731d' }
+INVOKE FUNCTION
+Before to etheresTransaction
+      ✓ fails if starting price is too high (279ms)
+[ 'MockTimeUniswapV3Pool' ]
+Declared
+deploying warp_output/contracts/test/MockTimeUniswapV3PoolDeployer__WC__MockTimeUniswapV3PoolDeployer.cairo
+0x1f
+deployed
+{ cairoFuncName: 'deploy_fad5359f' }
+INVOKE FUNCTION
+Before to etheresTransaction
+To ethers conversion happened
+Going to encode
+Encode is done
+{ cairoFuncName: 'initialize_f637731d' }
+INVOKE FUNCTION
+Before to etheresTransaction
+To ethers conversion happened
+      ✓ can be initialized at MIN_SQRT_RATIO (7448ms)
+[ 'MockTimeUniswapV3Pool' ]
+Declared
+deploying warp_output/contracts/test/MockTimeUniswapV3PoolDeployer__WC__MockTimeUniswapV3PoolDeployer.cairo
+0x22
+deployed
+{ cairoFuncName: 'deploy_fad5359f' }
+INVOKE FUNCTION
+Before to etheresTransaction
+To ethers conversion happened
+Going to encode
+Encode is done
+{ cairoFuncName: 'initialize_f637731d' }
+INVOKE FUNCTION
+Before to etheresTransaction
+To ethers conversion happened
+      ✓ can be initialized at MAX_SQRT_RATIO - 1 (24731ms)
+[ 'MockTimeUniswapV3Pool' ]
+Declared
+deploying warp_output/contracts/test/MockTimeUniswapV3PoolDeployer__WC__MockTimeUniswapV3PoolDeployer.cairo
+0x25
+deployed
+{ cairoFuncName: 'deploy_fad5359f' }
+INVOKE FUNCTION
+Before to etheresTransaction
+To ethers conversion happened
+Going to encode
+Encode is done
+{ cairoFuncName: 'initialize_f637731d' }
+INVOKE FUNCTION
+Before to etheresTransaction
+To ethers conversion happened
+      ✓ sets initial variables (6381ms)
+[ 'MockTimeUniswapV3Pool' ]
+Declared
+deploying warp_output/contracts/test/MockTimeUniswapV3PoolDeployer__WC__MockTimeUniswapV3PoolDeployer.cairo
+0x28
+deployed
+{ cairoFuncName: 'deploy_fad5359f' }
+INVOKE FUNCTION
+Before to etheresTransaction
+To ethers conversion happened
+Going to encode
+Encode is done
+{ cairoFuncName: 'initialize_f637731d' }
+INVOKE FUNCTION
+Before to etheresTransaction
+To ethers conversion happened
+      2) initializes the first observations slot
+[ 'MockTimeUniswapV3Pool' ]
+Declared
+deploying warp_output/contracts/test/MockTimeUniswapV3PoolDeployer__WC__MockTimeUniswapV3PoolDeployer.cairo
+0x2b
+deployed
+{ cairoFuncName: 'deploy_fad5359f' }
+INVOKE FUNCTION
+Before to etheresTransaction
+To ethers conversion happened
+Going to encode
+Encode is done
+{ cairoFuncName: 'initialize_f637731d' }
+INVOKE FUNCTION
+Before to etheresTransaction
+To ethers conversion happened
+      3) emits a Initialized event with the input tick
+    #increaseObservationCardinalityNext
+[ 'MockTimeUniswapV3Pool' ]
+Declared
+deploying warp_output/contracts/test/MockTimeUniswapV3PoolDeployer__WC__MockTimeUniswapV3PoolDeployer.cairo
+0x2e
+deployed
+{ cairoFuncName: 'deploy_fad5359f' }
+INVOKE FUNCTION
+Before to etheresTransaction
+To ethers conversion happened
+Going to encode
+Encode is done
+{ cairoFuncName: 'increaseObservationCardinalityNext_32148f67' }
+INVOKE FUNCTION
+Before to etheresTransaction
+      ✓ can only be called after initialize (161ms)
+[ 'MockTimeUniswapV3Pool' ]
+Declared
+deploying warp_output/contracts/test/MockTimeUniswapV3PoolDeployer__WC__MockTimeUniswapV3PoolDeployer.cairo
+0x31
+deployed
+{ cairoFuncName: 'deploy_fad5359f' }
+INVOKE FUNCTION
+
