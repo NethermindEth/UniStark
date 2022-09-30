@@ -78,7 +78,7 @@ describe('TickBitmap', () => {
       await initTicks([-200, -55, -4, 70, 78, 84, 139, 240, 535])
     })
 
-    describe.skip('lte = false', async () => {
+    describe('lte = false', async () => {
       it('returns tick to right if at initialized tick', async () => {
         const { next, initialized } = await tickBitmap.nextInitializedTickWithinOneWord(78, false)
         expect(next).to.eq(84)
