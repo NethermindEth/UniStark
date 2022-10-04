@@ -16,14 +16,6 @@ import './interfaces/pool/IUniswapV3PoolImmutables.sol';
 contract TestUniswapV3Callee is IUniswapV3MintCallback, IUniswapV3SwapCallback, IUniswapV3FlashCallback {
     using SafeCast for uint256;
 
-    function addressToBytes(address x, uint240 o, bytes memory b) private returns (bytes memory c) {
-      return uintToBytes(uint(x), o, b);
-    }
-    function uintToBytes(uint x, uint240 o, bytes memory b) private returns (bytes memory c) {
-        for (uint i = 0; i < 32; i++)
-            b[o + i] = bytes1(uint8(x / (2**(8*(31 - i)))));
-        return b;
-    }
     function bytesToAddress(bytes memory b, uint240 o) private returns (address x) {
       return address(bytesToUint(b, o));
     }
@@ -40,7 +32,7 @@ contract TestUniswapV3Callee is IUniswapV3MintCallback, IUniswapV3SwapCallback, 
         address recipient,
         uint160 sqrtPriceLimitX96
     ) external {
-        IUniswapV3PoolActions(pool).swap(recipient, true, amount0In.toInt256(), sqrtPriceLimitX96, addressToBytes(msg.sender, 0, new bytes(32)));
+        IUniswapV3PoolActions(pool).swap(recipient, true, amount0In.toInt256(), sqrtPriceLimitX96, abi.encode(msg.sender));
     }
 
     function swap0ForExact1(
@@ -49,7 +41,7 @@ contract TestUniswapV3Callee is IUniswapV3MintCallback, IUniswapV3SwapCallback, 
         address recipient,
         uint160 sqrtPriceLimitX96
     ) external returns (int, int) {
-       return IUniswapV3PoolActions(pool).swap(recipient, true, -amount1Out.toInt256(), sqrtPriceLimitX96, addressToBytes(msg.sender, 0, new bytes(32)));
+       return IUniswapV3PoolActions(pool).swap(recipient, true, -amount1Out.toInt256(), sqrtPriceLimitX96, abi.encode(msg.sender));
     }
 
     function swapExact1For0(
@@ -58,7 +50,7 @@ contract TestUniswapV3Callee is IUniswapV3MintCallback, IUniswapV3SwapCallback, 
         address recipient,
         uint160 sqrtPriceLimitX96
     ) external {
-        IUniswapV3PoolActions(pool).swap(recipient, false, amount1In.toInt256(), sqrtPriceLimitX96, addressToBytes(msg.sender, 0, new bytes(32)));
+        IUniswapV3PoolActions(pool).swap(recipient, false, amount1In.toInt256(), sqrtPriceLimitX96, abi.encode(msg.sender));
     }
 
     function swap1ForExact0(
@@ -67,7 +59,7 @@ contract TestUniswapV3Callee is IUniswapV3MintCallback, IUniswapV3SwapCallback, 
         address recipient,
         uint160 sqrtPriceLimitX96
     ) external {
-        IUniswapV3PoolActions(pool).swap(recipient, false, -amount0Out.toInt256(), sqrtPriceLimitX96, addressToBytes(msg.sender, 0, new bytes(32)));
+        IUniswapV3PoolActions(pool).swap(recipient, false, -amount0Out.toInt256(), sqrtPriceLimitX96, abi.encode(msg.sender));
     }
 
     function swapToLowerSqrtPrice(
@@ -75,7 +67,7 @@ contract TestUniswapV3Callee is IUniswapV3MintCallback, IUniswapV3SwapCallback, 
         uint160 sqrtPriceX96,
         address recipient
     ) external {
-        IUniswapV3PoolActions(pool).swap(recipient, true, type(int256).max, sqrtPriceX96, addressToBytes(msg.sender, 0, new bytes(32)));
+        IUniswapV3PoolActions(pool).swap(recipient, true, type(int256).max, sqrtPriceX96, abi.encode(msg.sender));
     }
 
     function swapToHigherSqrtPrice(
@@ -83,7 +75,7 @@ contract TestUniswapV3Callee is IUniswapV3MintCallback, IUniswapV3SwapCallback, 
         uint160 sqrtPriceX96,
         address recipient
     ) external {
-        IUniswapV3PoolActions(pool).swap(recipient, false, type(int256).max, sqrtPriceX96, addressToBytes(msg.sender, 0, new bytes(32)));
+        IUniswapV3PoolActions(pool).swap(recipient, false, type(int256).max, sqrtPriceX96, abi.encode(msg.sender));
     }
 
     event SwapCallback(int256 amount0Delta, int256 amount1Delta);
@@ -114,7 +106,7 @@ contract TestUniswapV3Callee is IUniswapV3MintCallback, IUniswapV3SwapCallback, 
         int24 tickUpper,
         uint128 amount
     ) external returns (uint256 amount0, uint256 amount1) {
-        return IUniswapV3PoolActions(pool).mint(recipient, tickLower, tickUpper, amount, addressToBytes(msg.sender, 0, new bytes(32)));
+        return IUniswapV3PoolActions(pool).mint(recipient, tickLower, tickUpper, amount, abi.encode(msg.sender));
     }
 
     event MintCallback(uint256 amount0Owed, uint256 amount1Owed);
@@ -143,11 +135,7 @@ contract TestUniswapV3Callee is IUniswapV3MintCallback, IUniswapV3SwapCallback, 
         uint256 pay0,
         uint256 pay1
     ) external {
-        bytes memory b = new bytes(32 * 3);
-        addressToBytes(msg.sender, 0, b);
-        uintToBytes(pay0, 32, b);
-        uintToBytes(pay1, 64, b);
-        IUniswapV3PoolActions(pool).flash(recipient, amount0, amount1, b);
+        IUniswapV3PoolActions(pool).flash(recipient, amount0, amount1, abi.encode(msg.sender, pay0, pay1));
     }
 
     function uniswapV3FlashCallback(
