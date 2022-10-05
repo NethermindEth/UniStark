@@ -4,7 +4,6 @@ import { OracleTest } from '../typechain/OracleTest'
 import checkObservationEquals from './shared/checkObservationEquals'
 import { expect } from './shared/expect'
 import { TEST_POOL_START_TIME } from './shared/fixtures'
-import snapshotGasCost from './shared/snapshotGasCost'
 import { MaxUint128 } from './shared/utilities'
 
 describe('Oracle', () => {
@@ -56,9 +55,6 @@ describe('Oracle', () => {
         tickCumulative: 0,
         secondsPerLiquidityCumulativeX128: 0,
       })
-    })
-    it('gas', async () => {
-      await snapshotGasCost(oracle.initialize({ liquidity: 1, tick: 1, time: 1 }))
     })
   })
 
@@ -116,23 +112,6 @@ describe('Oracle', () => {
       expect(await oracle.cardinalityNext()).to.eq(3)
     })
 
-    it('gas for growing by 1 slot when index == cardinality - 1', async () => {
-      await snapshotGasCost(oracle.grow(2))
-    })
-
-    it('gas for growing by 10 slots when index == cardinality - 1', async () => {
-      await snapshotGasCost(oracle.grow(11))
-    })
-
-    it('gas for growing by 1 slot when index != cardinality - 1', async () => {
-      await oracle.grow(2)
-      await snapshotGasCost(oracle.grow(3))
-    })
-
-    it('gas for growing by 10 slots when index != cardinality - 1', async () => {
-      await oracle.grow(2)
-      await snapshotGasCost(oracle.grow(12))
-    })
   })
 
   describe('#write', () => {
@@ -495,22 +474,6 @@ describe('Oracle', () => {
         expect(secondsPerLiquidityCumulativeX128s[5]).to.eq(0)
       })
 
-      it('gas for observe since most recent', async () => {
-        await oracle.initialize({ liquidity: 5, tick: -5, time: 5 })
-        await oracle.advanceTime(2)
-        await snapshotGasCost(oracle.getGasCostOfObserve([1]))
-      })
-
-      it('gas for single observation at current time', async () => {
-        await oracle.initialize({ liquidity: 5, tick: -5, time: 5 })
-        await snapshotGasCost(oracle.getGasCostOfObserve([0]))
-      })
-
-      it('gas for single observation at current time counterfactually computed', async () => {
-        await oracle.initialize({ liquidity: 5, tick: -5, time: 5 })
-        await oracle.advanceTime(5)
-        await snapshotGasCost(oracle.getGasCostOfObserve([0]))
-      })
     })
 
     for (const startingTime of [5, 2 ** 32 - 5]) {
@@ -607,192 +570,145 @@ describe('Oracle', () => {
           }).to.matchSnapshot()
         })
 
-        it('gas all of last 20 seconds', async () => {
-          await oracle.advanceTime(6)
-          await snapshotGasCost(
-            oracle.getGasCostOfObserve([20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0])
-          )
-        })
-
-        it('gas latest equal', async () => {
-          await snapshotGasCost(oracle.getGasCostOfObserve([0]))
-        })
-        it('gas latest transform', async () => {
-          await oracle.advanceTime(5)
-          await snapshotGasCost(oracle.getGasCostOfObserve([0]))
-        })
-        it('gas oldest', async () => {
-          await snapshotGasCost(oracle.getGasCostOfObserve([14]))
-        })
-        it('gas between oldest and oldest + 1', async () => {
-          await snapshotGasCost(oracle.getGasCostOfObserve([13]))
-        })
-        it('gas middle', async () => {
-          await snapshotGasCost(oracle.getGasCostOfObserve([5]))
-        })
       })
     }
   })
 
-  describe.skip('full oracle', function () {
-    this.timeout(1_200_000)
+  // describe.skip('full oracle', function () {
+  //   this.timeout(1_200_000)
 
-    let oracle: OracleTest
+  //   let oracle: OracleTest
 
-    const BATCH_SIZE = 300
+  //   const BATCH_SIZE = 300
 
-    const STARTING_TIME = TEST_POOL_START_TIME
+  //   const STARTING_TIME = TEST_POOL_START_TIME
 
-    const maxedOutOracleFixture = async () => {
-      const oracle = await oracleFixture()
-      await oracle.initialize({ liquidity: 0, tick: 0, time: STARTING_TIME })
-      let cardinalityNext = await oracle.cardinalityNext()
-      while (cardinalityNext < 65535) {
-        const growTo = Math.min(65535, cardinalityNext + BATCH_SIZE)
-        console.log('growing from', cardinalityNext, 'to', growTo)
-        await oracle.grow(growTo)
-        cardinalityNext = growTo
-      }
+  //   const maxedOutOracleFixture = async () => {
+  //     const oracle = await oracleFixture()
+  //     await oracle.initialize({ liquidity: 0, tick: 0, time: STARTING_TIME })
+  //     let cardinalityNext = await oracle.cardinalityNext()
+  //     while (cardinalityNext < 65535) {
+  //       const growTo = Math.min(65535, cardinalityNext + BATCH_SIZE)
+  //       console.log('growing from', cardinalityNext, 'to', growTo)
+  //       await oracle.grow(growTo)
+  //       cardinalityNext = growTo
+  //     }
 
-      for (let i = 0; i < 65535; i += BATCH_SIZE) {
-        console.log('batch update starting at', i)
-        const batch = Array(BATCH_SIZE)
-          .fill(null)
-          .map((_, j) => ({
-            advanceTimeBy: 13,
-            tick: -i - j,
-            liquidity: i + j,
-          }))
-        await oracle.batchUpdate(batch)
-      }
+  //     for (let i = 0; i < 65535; i += BATCH_SIZE) {
+  //       console.log('batch update starting at', i)
+  //       const batch = Array(BATCH_SIZE)
+  //         .fill(null)
+  //         .map((_, j) => ({
+  //           advanceTimeBy: 13,
+  //           tick: -i - j,
+  //           liquidity: i + j,
+  //         }))
+  //       await oracle.batchUpdate(batch)
+  //     }
 
-      return oracle
-    }
+  //     return oracle
+  //   }
 
-    beforeEach('create a full oracle', async () => {
-      oracle = await loadFixture(maxedOutOracleFixture)
-    })
+  //   beforeEach('create a full oracle', async () => {
+  //     oracle = await loadFixture(maxedOutOracleFixture)
+  //   })
 
-    it('has max cardinality next', async () => {
-      expect(await oracle.cardinalityNext()).to.eq(65535)
-    })
+  //   it('has max cardinality next', async () => {
+  //     expect(await oracle.cardinalityNext()).to.eq(65535)
+  //   })
 
-    it('has max cardinality', async () => {
-      expect(await oracle.cardinality()).to.eq(65535)
-    })
+  //   it('has max cardinality', async () => {
+  //     expect(await oracle.cardinality()).to.eq(65535)
+  //   })
 
-    it('index wrapped around', async () => {
-      expect(await oracle.index()).to.eq(165)
-    })
+  //   it('index wrapped around', async () => {
+  //     expect(await oracle.index()).to.eq(165)
+  //   })
 
-    async function checkObserve(
-      secondsAgo: number,
-      expected?: { tickCumulative: BigNumberish; secondsPerLiquidityCumulativeX128: BigNumberish }
-    ) {
-      const { tickCumulatives, secondsPerLiquidityCumulativeX128s } = await oracle.observe([secondsAgo])
-      const check = {
-        tickCumulative: tickCumulatives[0].toString(),
-        secondsPerLiquidityCumulativeX128: secondsPerLiquidityCumulativeX128s[0].toString(),
-      }
-      if (typeof expected === 'undefined') {
-        expect(check).to.matchSnapshot()
-      } else {
-        expect(check).to.deep.eq({
-          tickCumulative: expected.tickCumulative.toString(),
-          secondsPerLiquidityCumulativeX128: expected.secondsPerLiquidityCumulativeX128.toString(),
-        })
-      }
-    }
+  //   async function checkObserve(
+  //     secondsAgo: number,
+  //     expected?: { tickCumulative: BigNumberish; secondsPerLiquidityCumulativeX128: BigNumberish }
+  //   ) {
+  //     const { tickCumulatives, secondsPerLiquidityCumulativeX128s } = await oracle.observe([secondsAgo])
+  //     const check = {
+  //       tickCumulative: tickCumulatives[0].toString(),
+  //       secondsPerLiquidityCumulativeX128: secondsPerLiquidityCumulativeX128s[0].toString(),
+  //     }
+  //     if (typeof expected === 'undefined') {
+  //       expect(check).to.matchSnapshot()
+  //     } else {
+  //       expect(check).to.deep.eq({
+  //         tickCumulative: expected.tickCumulative.toString(),
+  //         secondsPerLiquidityCumulativeX128: expected.secondsPerLiquidityCumulativeX128.toString(),
+  //       })
+  //     }
+  //   }
 
-    it('can observe into the ordered portion with exact seconds ago', async () => {
-      await checkObserve(100 * 13, {
-        secondsPerLiquidityCumulativeX128: '60465049086512033878831623038233202591033',
-        tickCumulative: '-27970560813',
-      })
-    })
+  //   it('can observe into the ordered portion with exact seconds ago', async () => {
+  //     await checkObserve(100 * 13, {
+  //       secondsPerLiquidityCumulativeX128: '60465049086512033878831623038233202591033',
+  //       tickCumulative: '-27970560813',
+  //     })
+  //   })
 
-    it('can observe into the ordered portion with unexact seconds ago', async () => {
-      await checkObserve(100 * 13 + 5, {
-        secondsPerLiquidityCumulativeX128: '60465023149565257990964350912969670793706',
-        tickCumulative: '-27970232823',
-      })
-    })
+  //   it('can observe into the ordered portion with unexact seconds ago', async () => {
+  //     await checkObserve(100 * 13 + 5, {
+  //       secondsPerLiquidityCumulativeX128: '60465023149565257990964350912969670793706',
+  //       tickCumulative: '-27970232823',
+  //     })
+  //   })
 
-    it('can observe at exactly the latest observation', async () => {
-      await checkObserve(0, {
-        secondsPerLiquidityCumulativeX128: '60471787506468701386237800669810720099776',
-        tickCumulative: '-28055903863',
-      })
-    })
+  //   it('can observe at exactly the latest observation', async () => {
+  //     await checkObserve(0, {
+  //       secondsPerLiquidityCumulativeX128: '60471787506468701386237800669810720099776',
+  //       tickCumulative: '-28055903863',
+  //     })
+  //   })
 
-    it('can observe at exactly the latest observation after some time passes', async () => {
-      await oracle.advanceTime(5)
-      await checkObserve(5, {
-        secondsPerLiquidityCumulativeX128: '60471787506468701386237800669810720099776',
-        tickCumulative: '-28055903863',
-      })
-    })
+  //   it('can observe at exactly the latest observation after some time passes', async () => {
+  //     await oracle.advanceTime(5)
+  //     await checkObserve(5, {
+  //       secondsPerLiquidityCumulativeX128: '60471787506468701386237800669810720099776',
+  //       tickCumulative: '-28055903863',
+  //     })
+  //   })
 
-    it('can observe after the latest observation counterfactual', async () => {
-      await oracle.advanceTime(5)
-      await checkObserve(3, {
-        secondsPerLiquidityCumulativeX128: '60471797865298117996489508104462919730461',
-        tickCumulative: '-28056035261',
-      })
-    })
+  //   it('can observe after the latest observation counterfactual', async () => {
+  //     await oracle.advanceTime(5)
+  //     await checkObserve(3, {
+  //       secondsPerLiquidityCumulativeX128: '60471797865298117996489508104462919730461',
+  //       tickCumulative: '-28056035261',
+  //     })
+  //   })
 
-    it('can observe into the unordered portion of array at exact seconds ago of observation', async () => {
-      await checkObserve(200 * 13, {
-        secondsPerLiquidityCumulativeX128: '60458300386499273141628780395875293027404',
-        tickCumulative: '-27885347763',
-      })
-    })
+  //   it('can observe into the unordered portion of array at exact seconds ago of observation', async () => {
+  //     await checkObserve(200 * 13, {
+  //       secondsPerLiquidityCumulativeX128: '60458300386499273141628780395875293027404',
+  //       tickCumulative: '-27885347763',
+  //     })
+  //   })
 
-    it('can observe into the unordered portion of array at seconds ago between observations', async () => {
-      await checkObserve(200 * 13 + 5, {
-        secondsPerLiquidityCumulativeX128: '60458274409952896081377821330361274907140',
-        tickCumulative: '-27885020273',
-      })
-    })
+  //   it('can observe into the unordered portion of array at seconds ago between observations', async () => {
+  //     await checkObserve(200 * 13 + 5, {
+  //       secondsPerLiquidityCumulativeX128: '60458274409952896081377821330361274907140',
+  //       tickCumulative: '-27885020273',
+  //     })
+  //   })
 
-    it('can observe the oldest observation 13*65534 seconds ago', async () => {
-      await checkObserve(13 * 65534, {
-        secondsPerLiquidityCumulativeX128: '33974356747348039873972993881117400879779',
-        tickCumulative: '-175890',
-      })
-    })
+  //   it('can observe the oldest observation 13*65534 seconds ago', async () => {
+  //     await checkObserve(13 * 65534, {
+  //       secondsPerLiquidityCumulativeX128: '33974356747348039873972993881117400879779',
+  //       tickCumulative: '-175890',
+  //     })
+  //   })
 
-    it('can observe the oldest observation 13*65534 + 5 seconds ago if time has elapsed', async () => {
-      await oracle.advanceTime(5)
-      await checkObserve(13 * 65534 + 5, {
-        secondsPerLiquidityCumulativeX128: '33974356747348039873972993881117400879779',
-        tickCumulative: '-175890',
-      })
-    })
+  //   it('can observe the oldest observation 13*65534 + 5 seconds ago if time has elapsed', async () => {
+  //     await oracle.advanceTime(5)
+  //     await checkObserve(13 * 65534 + 5, {
+  //       secondsPerLiquidityCumulativeX128: '33974356747348039873972993881117400879779',
+  //       tickCumulative: '-175890',
+  //     })
+  //   })
 
-    it('gas cost of observe(0)', async () => {
-      await snapshotGasCost(oracle.getGasCostOfObserve([0]))
-    })
-    it('gas cost of observe(200 * 13)', async () => {
-      await snapshotGasCost(oracle.getGasCostOfObserve([200 + 13]))
-    })
-    it('gas cost of observe(200 * 13 + 5)', async () => {
-      await snapshotGasCost(oracle.getGasCostOfObserve([200 + 13 + 5]))
-    })
-    it('gas cost of observe(0) after 5 seconds', async () => {
-      await oracle.advanceTime(5)
-      await snapshotGasCost(oracle.getGasCostOfObserve([0]))
-    })
-    it('gas cost of observe(5) after 5 seconds', async () => {
-      await oracle.advanceTime(5)
-      await snapshotGasCost(oracle.getGasCostOfObserve([5]))
-    })
-    it('gas cost of observe(oldest)', async () => {
-      await snapshotGasCost(oracle.getGasCostOfObserve([65534 * 13]))
-    })
-    it('gas cost of observe(oldest) after 5 seconds', async () => {
-      await oracle.advanceTime(5)
-      await snapshotGasCost(oracle.getGasCostOfObserve([65534 * 13 + 5]))
-    })
-  })
+  // })
 })

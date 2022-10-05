@@ -33,23 +33,27 @@ library Oracle {
         int24 tick,
         uint128 liquidity
     ) private pure returns (Observation memory) {
+        unchecked {
         uint32 delta = blockTimestamp - last.blockTimestamp;
         return
             Observation({
                 blockTimestamp: blockTimestamp,
-                tickCumulative: last.tickCumulative + int56(tick) * int32(delta),
+                tickCumulative: last.tickCumulative + int56(uint56(int56(tick)) * delta),
                 secondsPerLiquidityCumulativeX128: last.secondsPerLiquidityCumulativeX128 +
                     ((uint160(delta) << 128) / conditional0(liquidity)),
                 initialized: true
             });
+        }
     }
 
     function conditional0(uint128 liquidity) internal pure returns (uint128){
+       unchecked {
         if(liquidity > 0){
             return liquidity;
         } else {
             return 1;
         }
+       }
     }
 
     /// @notice Initialize the oracle array by writing the first slot. Called once for the lifecycle of the observations array
@@ -61,6 +65,7 @@ library Oracle {
         internal
         returns (uint16 cardinality, uint16 cardinalityNext)
     {
+        unchecked {
         self[0] = Observation({
             blockTimestamp: time,
             tickCumulative: 0,
@@ -68,6 +73,7 @@ library Oracle {
             initialized: true
         });
         return (1, 1);
+        }
     }
 
     /// @notice Writes an oracle observation to the array
@@ -92,6 +98,7 @@ library Oracle {
         uint16 cardinality,
         uint16 cardinalityNext
     ) internal returns (uint16 indexUpdated, uint16 cardinalityUpdated) {
+        unchecked {
         Observation memory last = self[index];
 
         // early return if we've already written an observation this block
@@ -106,6 +113,7 @@ library Oracle {
 
         indexUpdated = (index + 1) % cardinalityUpdated;
         self[indexUpdated] = transform(last, blockTimestamp, tick, liquidity);
+        }
     }
 
     /// @notice Prepares the oracle array to store up to `next` observations
@@ -118,6 +126,7 @@ library Oracle {
         uint16 current,
         uint16 next
     ) internal returns (uint16) {
+        unchecked {
         require(current > 0, 'I');
         // no-op if the passed next value isn't greater than the current next value
         if (next <= current) return current;
@@ -125,6 +134,7 @@ library Oracle {
         // this data will not be used because the initialized boolean is still false
         for (uint16 i = current; i < next; i++) self[i].blockTimestamp = 1;
         return next;
+        }
     }
 
     /// @notice comparator for 32-bit timestamps
@@ -138,6 +148,7 @@ library Oracle {
         uint32 a,
         uint32 b
     ) private pure returns (bool) {
+        unchecked {
         // if there hasn't been overflow, no need to adjust
         if (a <= time && b <= time) return a <= b;
 
@@ -147,6 +158,7 @@ library Oracle {
         if(b > time) bAdjusted = b;
 
         return aAdjusted <= bAdjusted;
+        }
     }
 
     /// @notice Fetches the observations beforeOrAt and atOrAfter a target, i.e. where [beforeOrAt, atOrAfter] is satisfied.
@@ -167,6 +179,7 @@ library Oracle {
         uint16 index,
         uint16 cardinality
     ) private view returns (Observation memory beforeOrAt, Observation memory atOrAfter) {
+        unchecked {
         uint256 l = (index + 1) % cardinality; // oldest observation
         uint256 r = l + cardinality - 1; // newest observation
         uint256 i;
@@ -191,6 +204,7 @@ library Oracle {
             if (!targetAtOrAfter) r = i - 1;
             else l = i + 1;
         }
+        }
     }
 
     /// @notice Fetches the observations beforeOrAt and atOrAfter a given target, i.e. where [beforeOrAt, atOrAfter] is satisfied
@@ -214,6 +228,7 @@ library Oracle {
         uint128 liquidity,
         uint16 cardinality
     ) private view returns (Observation memory beforeOrAt, Observation memory atOrAfter) {
+        unchecked {
         // optimistically set before to the newest observation
         beforeOrAt = self[index];
 
@@ -237,6 +252,7 @@ library Oracle {
 
         // if we've reached this point, we have to binary search
         return binarySearch(self, time, target, index, cardinality);
+        }
     }
 
     /// @dev Reverts if an observation at or before the desired observation timestamp does not exist.
@@ -261,6 +277,7 @@ library Oracle {
         uint128 liquidity,
         uint16 cardinality
     ) internal view returns (int56 tickCumulative, uint160 secondsPerLiquidityCumulativeX128) {
+        unchecked {
         if (secondsAgo == 0) {
             Observation memory last = self[index];
             if (last.blockTimestamp != time) last = transform(last, time, tick, liquidity);
@@ -294,6 +311,7 @@ library Oracle {
                     )
             );
         }
+        }
     }
 
     /// @notice Returns the accumulator values as of each time seconds ago from the given time in the array of `secondsAgos`
@@ -316,6 +334,7 @@ library Oracle {
         uint128 liquidity,
         uint16 cardinality
     ) internal view returns (int56[] memory tickCumulatives, uint160[] memory secondsPerLiquidityCumulativeX128s) {
+        unchecked {
         require(cardinality > 0, 'I');
 
         tickCumulatives = new int56[](secondsAgos.length);
@@ -331,5 +350,6 @@ library Oracle {
                 cardinality
             );
         }
+    }
     }
 }

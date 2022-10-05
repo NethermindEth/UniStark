@@ -23,15 +23,19 @@ contract OracleTest {
     }
 
     function initialize(InitializeParams calldata params) external {
+        unchecked {
         require(cardinality == 0, 'already initialized');
         time = params.time;
         tick = params.tick;
         liquidity = params.liquidity;
         (cardinality, cardinalityNext) = observations.initialize(params.time);
+        }
     }
 
     function advanceTime(uint32 by) public {
-        time += by;
+        unchecked {
+            time += by;
+        }
     }
 
     struct UpdateParams {
@@ -49,6 +53,7 @@ contract OracleTest {
     }
 
     function batchUpdate(UpdateParams[] calldata params) external {
+        unchecked {
         // sload everything
         int24 _tick = tick;
         uint128 _liquidity = liquidity;
@@ -58,7 +63,7 @@ contract OracleTest {
         uint32 _time = time;
 
         for (uint256 i = 0; i < params.length; i++) {
-            _time += params[i].advanceTimeBy;
+                _time += params[i].advanceTimeBy;
             (_index, _cardinality) = observations.write(
                 _index,
                 _time,
@@ -77,10 +82,13 @@ contract OracleTest {
         index = _index;
         cardinality = _cardinality;
         time = _time;
+        }
     }
 
     function grow(uint16 _cardinalityNext) external {
+        unchecked {
         cardinalityNext = observations.grow(cardinalityNext, _cardinalityNext);
+        }
     }
 
     function observe(uint32[] calldata secondsAgos)
@@ -88,6 +96,8 @@ contract OracleTest {
         view
         returns (int56[] memory tickCumulatives, uint160[] memory secondsPerLiquidityCumulativeX128s)
     {
-        return observations.observe(time, secondsAgos, tick, index, liquidity, cardinality);
+        unchecked {
+            return observations.observe(time, secondsAgos, tick, index, liquidity, cardinality);
+        }
     }
 }
