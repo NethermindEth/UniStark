@@ -1,5 +1,7 @@
 import bn from 'bignumber.js'
+import { resolve } from 'path';
 import { BigNumber, BigNumberish, constants, Contract, ContractTransaction, utils, Wallet } from 'ethers'
+import {calculateStarkNetAddress, getContractsToDeclare} from 'hardhat-warp/dist/utils';
 import { TestUniswapV3Callee } from '../../typechain/TestUniswapV3Callee'
 import { TestUniswapV3Router } from '../../typechain/TestUniswapV3Router'
 import { MockTimeUniswapV3Pool } from '../../typechain/MockTimeUniswapV3Pool'
@@ -38,23 +40,23 @@ export function getCreate2Address(
   factoryAddress: string,
   [tokenA, tokenB]: [string, string],
   fee: number,
-  bytecode: string
+  _bytecode: string
 ): string {
   const [token0, token1] = tokenA.toLowerCase() < tokenB.toLowerCase() ? [tokenA, tokenB] : [tokenB, tokenA]
-  const constructorArgumentsEncoded = utils.defaultAbiCoder.encode(
-    ['address', 'address', 'uint24'],
-    [token0, token1, fee]
-  )
-  const create2Inputs = [
-    '0xff',
-    factoryAddress,
-    // salt
-    utils.keccak256(constructorArgumentsEncoded),
-    // init code. bytecode + constructor arguments
-    utils.keccak256(bytecode),
-  ]
-  const sanitizedInputs = `0x${create2Inputs.map((i) => i.slice(2)).join('')}`
-  return utils.getAddress(`0x${utils.keccak256(sanitizedInputs).slice(-40)}`)
+
+  const args = [BigInt(token0).toString(16).padStart(64, '0'), BigInt(token1).toString(16).padStart(64, '0'),
+  BigInt(fee).toString(16).padStart(6, '0')].join('');
+
+  const salt = utils.keccak256(`0x${args}`).slice(0,-4)
+
+  const dependencies = getContractsToDeclare(resolve(__dirname, "../../warp_output/contracts/UniswapV3Factory__WC__UniswapV3Factory.cairo"));
+
+  const poolClassHash = dependencies["UniswapV3Pool"];
+  if (poolClassHash === undefined) throw new Error("Couldn't find UniswapV3Pool class hash");
+
+  const address = calculateStarkNetAddress(salt, poolClassHash, '[]', factoryAddress);
+
+  return address;
 }
 
 bn.config({ EXPONENTIAL_AT: 999999, DECIMAL_PLACES: 40 })
