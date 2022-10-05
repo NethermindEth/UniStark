@@ -38,7 +38,7 @@
     "@types/mocha": "^5.2.7",
     "chai": "^4.2.0",
     "decimal.js": "^10.2.1",
-    "ethereum-waffle": "^3.4.4",
+    "ethereum-waffle": "^4.0.7",
     "ethers": "^5.7.0",
     "hardhat": "^2.2.0",
     "hardhat-typechain": "^0.3.5",
