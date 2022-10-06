@@ -9,8 +9,8 @@ import { FeeAmount, getCreate2Address, TICK_SPACINGS } from './shared/utilities'
 const { constants } = ethers
 
 const TEST_ADDRESSES: [string, string] = [
-  '0x1000000000000000000000000000000000000000',
-  '0x2000000000000000000000000000000000000000',
+  '0x0000000000000000000000001000000000000000000000000000000000000000',
+  '0x0000000000000000000000002000000000000000000000000000000000000000',
 ]
 
 const createFixtureLoader = waffle.createFixtureLoader
@@ -65,18 +65,27 @@ describe('UniswapV3Factory', () => {
     feeAmount: FeeAmount,
     tickSpacing: number = TICK_SPACINGS[feeAmount]
   ) {
+    console.log("entered")
     const create2Address = getCreate2Address(factory.address, tokens, feeAmount, poolBytecode)
     const create = factory.createPool(tokens[0], tokens[1], feeAmount)
+    const rec = await(await create).wait()
+    console.log("events", JSON.stringify(rec.events))
 
+
+    console.log("create2Address",create2Address)
+    console.log("aaaaah")
     await expect(create)
       .to.emit(factory, 'PoolCreated')
       .withArgs(TEST_ADDRESSES[0], TEST_ADDRESSES[1], feeAmount, tickSpacing, create2Address)
 
+    console.log("here")
     await expect(factory.createPool(tokens[0], tokens[1], feeAmount)).to.be.reverted
     await expect(factory.createPool(tokens[1], tokens[0], feeAmount)).to.be.reverted
+    console.log("later")
     expect(await factory.getPool(tokens[0], tokens[1], feeAmount), 'getPool in order').to.eq(create2Address)
     expect(await factory.getPool(tokens[1], tokens[0], feeAmount), 'getPool in reverse').to.eq(create2Address)
 
+    console.log("even later")
     const poolContractFactory = await ethers.getContractFactory('UniswapV3Pool')
     const pool = poolContractFactory.attach(create2Address)
     expect(await pool.factory(), 'pool factory address').to.eq(factory.address)
@@ -87,7 +96,7 @@ describe('UniswapV3Factory', () => {
   }
 
   describe('#createPool', () => {
-    it('succeeds for low fee pool', async () => {
+    it.only('succeeds for low fee pool', async () => {
       await createAndCheckPool(TEST_ADDRESSES, FeeAmount.LOW)
     })
 

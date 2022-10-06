@@ -119,7 +119,7 @@ describe('UniswapV3Pool', () => {
       await expect(pool.initialize(1)).to.be.revertedWith('R')
       await expect(pool.initialize(MIN_SQRT_RATIO.sub(1))).to.be.revertedWith('R')
     })
-    it('fails if starting price is too high', async () => {
+    it.only('fails if starting price is too high', async () => {
       await expect(pool.initialize(MAX_SQRT_RATIO)).to.be.revertedWith('R')
       await expect(pool.initialize(BigNumber.from(2).pow(160).sub(1))).to.be.revertedWith('R')
     })

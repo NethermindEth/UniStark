@@ -1,7 +1,7 @@
 import bn from 'bignumber.js'
 import { resolve } from 'path';
 import { BigNumber, BigNumberish, constants, Contract, ContractTransaction, utils, Wallet } from 'ethers'
-import {calculateStarkNetAddress, getContractsToDeclare} from 'hardhat-warp/dist/utils';
+import {calculateStarkNetAddress, getContractsToDeclare, normalizeAddress} from 'hardhat-warp/dist/utils';
 import { TestUniswapV3Callee } from '../../typechain/TestUniswapV3Callee'
 import { TestUniswapV3Router } from '../../typechain/TestUniswapV3Router'
 import { MockTimeUniswapV3Pool } from '../../typechain/MockTimeUniswapV3Pool'
@@ -56,7 +56,8 @@ export function getCreate2Address(
 
   const address = calculateStarkNetAddress(salt, poolClassHash, '[]', factoryAddress);
 
-  return address;
+  return normalizeAddress("0x" + BigInt(address).toString(16));
+
 }
 
 bn.config({ EXPONENTIAL_AT: 999999, DECIMAL_PLACES: 40 })

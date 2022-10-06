@@ -1,5 +1,9 @@
 import 'hardhat-typechain'
-import 'hardhat-warp/src/index_before'
+import {fucku} from 'hardhat-warp/src/index_before'
+const properties = require('@ethersproject/properties')
+fucku(
+  properties,
+)
 import '@nomiclabs/hardhat-ethers'
 import '@nomiclabs/hardhat-waffle'
 import '@nomiclabs/hardhat-etherscan'
