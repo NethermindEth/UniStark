@@ -40,20 +40,10 @@ library Oracle {
                 blockTimestamp: blockTimestamp,
                 tickCumulative: last.tickCumulative + int56(uint56(int56(tick)) * delta),
                 secondsPerLiquidityCumulativeX128: last.secondsPerLiquidityCumulativeX128 +
-                    ((uint160(delta) << 128) / conditional0(liquidity)),
+                    ((uint160(delta) << 128) / (liquidity > 0 ? liquidity : 1)),
                 initialized: true
             });
         }
-    }
-
-    function conditional0(uint128 liquidity) internal pure returns (uint128){
-       unchecked {
-        if(liquidity > 0){
-            return liquidity;
-        } else {
-            return 1;
-        }
-       }
     }
 
     /// @notice Initialize the oracle array by writing the first slot. Called once for the lifecycle of the observations array
@@ -105,11 +95,9 @@ library Oracle {
         if (last.blockTimestamp == blockTimestamp) return (index, cardinality);
 
         // if the conditions are right, we can bump the cardinality
-        if (cardinalityNext > cardinality && index == (cardinality - 1)) {
-            cardinalityUpdated = cardinalityNext;
-        } else {
-            cardinalityUpdated = cardinality;
-        }
+        cardinalityUpdated = (cardinalityNext > cardinality && index == (cardinality - 1)) 
+            ? cardinalityNext 
+            : cardinality;
 
         indexUpdated = (index + 1) % cardinalityUpdated;
         self[indexUpdated] = transform(last, blockTimestamp, tick, liquidity);
@@ -152,10 +140,8 @@ library Oracle {
         // if there hasn't been overflow, no need to adjust
         if (a <= time && b <= time) return a <= b;
 
-        uint256 aAdjusted = a + 2**32;
-        if(a > time) aAdjusted = a;
-        uint256 bAdjusted = b + 2**32;
-        if(b > time) bAdjusted = b;
+        uint256 aAdjusted = a > time ? a : a + 2**32;
+        uint256 bAdjusted = b > time ? b : b + 2**32;
 
         return aAdjusted <= bAdjusted;
         }
