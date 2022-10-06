@@ -646,93 +646,7 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
                 liquidity: cache.liquidityStart
             });
         // continue swapping as long as we haven't used the entire input/output and haven't reached the price limit
-        (state, cache) = swap_while(
-          zeroForOne,
-          state,
-          sqrtPriceLimitX96,
-          exactInput,
-          cache,
-          slot0Start
-        );
-        
-
-        // update tick and write an oracle entry if the tick change
-        if (state.tick != slot0Start.tick) {
-            (uint16 observationIndex, uint16 observationCardinality) =
-                observations.write(
-                    slot0Start.observationIndex,
-                    cache.blockTimestamp,
-                    slot0Start.tick,
-                    cache.liquidityStart,
-                    slot0Start.observationCardinality,
-                    slot0Start.observationCardinalityNext
-                );
-            (slot0.sqrtPriceX96, slot0.tick, slot0.observationIndex, slot0.observationCardinality) = (
-                state.sqrtPriceX96,
-                state.tick,
-                observationIndex,
-                observationCardinality
-            );
-        } else {
-            // otherwise just update the price
-            slot0.sqrtPriceX96 = state.sqrtPriceX96;
-        }
-
-        // update liquidity if it changed
-        if (cache.liquidityStart != state.liquidity) liquidity = state.liquidity;
-
-        // update fee growth global and, if necessary, protocol fees
-        // overflow is acceptable, protocol has to withdraw before it hits type(uint128).max fees
-        if (zeroForOne) {
-            feeGrowthGlobal0X128 = state.feeGrowthGlobalX128;
-            if (state.protocolFee > 0) protocolFees.token0 += state.protocolFee;
-        } else {
-            feeGrowthGlobal1X128 = state.feeGrowthGlobalX128;
-            if (state.protocolFee > 0) protocolFees.token1 += state.protocolFee;
-        }
-
-        (amount0, amount1) = (state.amountCalculated, amountSpecified - state.amountSpecifiedRemaining);
-        if (zeroForOne == exactInput) {
-            (amount0, amount1) = (
-                amountSpecified - state.amountSpecifiedRemaining,
-                state.amountCalculated
-            );
-        }
-
-        // do the transfers and collect payment
-        if (zeroForOne) {
-            if (amount1 < 0) TransferHelper.safeTransfer(token1, recipient, uint256(-amount1));
-
-            uint256 balance0Before = balance0();
-            IUniswapV3SwapCallback(msg.sender).uniswapV3SwapCallback(amount0, amount1, data);
-            require(balance0Before.add(uint256(amount0)) <= balance0(), 'IIA');
-        } else {
-            if (amount0 < 0) TransferHelper.safeTransfer(token0, recipient, uint256(-amount0));
-
-            uint256 balance1Before = balance1();
-            IUniswapV3SwapCallback(msg.sender).uniswapV3SwapCallback(amount0, amount1, data);
-            require(balance1Before.add(uint256(amount1)) <= balance1(), 'IIA');
-        }
-
-        emit Swap(msg.sender, recipient, amount0, amount1, state.sqrtPriceX96, state.liquidity, state.tick);
-        slot0.unlocked = true;
-    }
-
-    function swap_while(
-        bool zeroForOne,
-        SwapState memory state,
-        uint160 sqrtPriceLimitX96,
-        bool exactInput,
-        SwapCache memory cache,
-        Slot0 memory slot0Start
-    ) private returns (
-        SwapState memory state_,
-        SwapCache memory cache_
-    ){
-      uint8 counter = 0;
-      while (state.amountSpecifiedRemaining != 0 && state.sqrtPriceX96 != sqrtPriceLimitX96 || counter < 5) {
-            counter = counter + 1;
-            
+        while (state.amountSpecifiedRemaining != 0 && state.sqrtPriceX96 != sqrtPriceLimitX96) {
             StepComputations memory step;
 
             step.sqrtPriceStartX96 = state.sqrtPriceX96;
@@ -821,13 +735,74 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
                 } else {
                     state.tick = step.tickNext;
                 }
-            } else if (state.sqrtPriceX96 != step.sqrtPriceStartX96) {
-                // recompute unless we're on a lower tick boundary (i.e. already transitioned ticks), and haven't moved
-                state.tick = TickMath.getTickAtSqrtRatio(state.sqrtPriceX96);
-            }
+          } else if (state.sqrtPriceX96 != step.sqrtPriceStartX96) {
+              // recompute unless we're on a lower tick boundary (i.e. already transitioned ticks), and haven't moved
+              state.tick = TickMath.getTickAtSqrtRatio(state.sqrtPriceX96);
+          }
         }
-        return (state, cache);
+
+        // update tick and write an oracle entry if the tick change
+        if (state.tick != slot0Start.tick) {
+            (uint16 observationIndex, uint16 observationCardinality) =
+                observations.write(
+                    slot0Start.observationIndex,
+                    cache.blockTimestamp,
+                    slot0Start.tick,
+                    cache.liquidityStart,
+                    slot0Start.observationCardinality,
+                    slot0Start.observationCardinalityNext
+                );
+            (slot0.sqrtPriceX96, slot0.tick, slot0.observationIndex, slot0.observationCardinality) = (
+                state.sqrtPriceX96,
+                state.tick,
+                observationIndex,
+                observationCardinality
+            );
+        } else {
+            // otherwise just update the price
+            slot0.sqrtPriceX96 = state.sqrtPriceX96;
+        }
+
+        // update liquidity if it changed
+        if (cache.liquidityStart != state.liquidity) liquidity = state.liquidity;
+
+        // update fee growth global and, if necessary, protocol fees
+        // overflow is acceptable, protocol has to withdraw before it hits type(uint128).max fees
+        if (zeroForOne) {
+            feeGrowthGlobal0X128 = state.feeGrowthGlobalX128;
+            if (state.protocolFee > 0) protocolFees.token0 += state.protocolFee;
+        } else {
+            feeGrowthGlobal1X128 = state.feeGrowthGlobalX128;
+            if (state.protocolFee > 0) protocolFees.token1 += state.protocolFee;
+        }
+
+        (amount0, amount1) = (state.amountCalculated, amountSpecified - state.amountSpecifiedRemaining);
+        if (zeroForOne == exactInput) {
+            (amount0, amount1) = (
+                amountSpecified - state.amountSpecifiedRemaining,
+                state.amountCalculated
+            );
+        }
+
+        // do the transfers and collect payment
+        if (zeroForOne) {
+            if (amount1 < 0) TransferHelper.safeTransfer(token1, recipient, uint256(-amount1));
+
+            uint256 balance0Before = balance0();
+            IUniswapV3SwapCallback(msg.sender).uniswapV3SwapCallback(amount0, amount1, data);
+            require(balance0Before.add(uint256(amount0)) <= balance0(), 'IIA');
+        } else {
+            if (amount0 < 0) TransferHelper.safeTransfer(token0, recipient, uint256(-amount0));
+
+            uint256 balance1Before = balance1();
+            IUniswapV3SwapCallback(msg.sender).uniswapV3SwapCallback(amount0, amount1, data);
+            require(balance1Before.add(uint256(amount1)) <= balance1(), 'IIA');
+        }
+
+        emit Swap(msg.sender, recipient, amount0, amount1, state.sqrtPriceX96, state.liquidity, state.tick);
+        slot0.unlocked = true;
     }
+
     function conditional0(bool zeroForOne, Slot0 memory slot0Start) internal pure returns (uint8) {
         if (zeroForOne) {
             return (slot0Start.feeProtocol % 16);
