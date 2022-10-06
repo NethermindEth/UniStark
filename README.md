@@ -1,4 +1,4 @@
-# StarkSwap V3
+# UniStark (a.k.a Uniswap V3 warped)
 
 This repository contains the core smart contracts for the [Uniswap V3
 Protocol](https://github.com/Uniswap/v3-core) modified for transpilation by 
