@@ -57,9 +57,6 @@ describe('Oracle', () => {
         secondsPerLiquidityCumulativeX128: 0,
       })
     })
-    it('gas', async () => {
-      await snapshotGasCost(oracle.initialize({ liquidity: 1, tick: 1, time: 1 }))
-    })
   })
 
   describe('#grow', () => {
