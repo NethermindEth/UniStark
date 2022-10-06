@@ -22,16 +22,10 @@ library TickMath {
     /// at the given tick
     function getSqrtRatioAtTick(int24 tick) internal pure returns (uint160 sqrtPriceX96) {
         unchecked {
-        uint256 absTick = 0;
-        if (tick < 0) {
-            absTick = uint256(-int256(tick));
-        } else {
-            absTick = uint256(int256(tick));
-        }
+        uint256 absTick = tick < 0 ? uint256(-int256(tick)) : uint256(int256(tick));
         require(absTick <= uint256(uint24(MAX_TICK)), 'T');
 
-        uint256 ratio = 0x100000000000000000000000000000000;
-        if (absTick & 0x1 != 0) ratio = 0xfffcb933bd6fad37aa2d162d1a594001;
+        uint256 ratio = absTick & 0x1 != 0 ? 0xfffcb933bd6fad37aa2d162d1a594001 : 0x100000000000000000000000000000000;
         if (absTick & 0x2 != 0) ratio = (ratio * 0xfff97272373d413259a46990580e213a) >> 128;
         if (absTick & 0x4 != 0) ratio = (ratio * 0xfff2e50f5f656932ef12357cf3c7fdcc) >> 128;
         if (absTick & 0x8 != 0) ratio = (ratio * 0xffe5caca7e10e4e61c3624eaa0941cd0) >> 128;
@@ -57,11 +51,7 @@ library TickMath {
         // this divides by 1<<32 rounding up to go from a Q128.128 to a Q128.96.
         // we then downcast because we know the result always fits within 160 bits due to our tick input constraint
         // we round up in the division so getTickAtSqrtRatio of the output price is always consistent
-        if (ratio % (1 << 32) == 0) {
-            sqrtPriceX96 = uint160(ratio >> 32);
-        } else {
-            sqrtPriceX96 = uint160((ratio >> 32) + 1);
-        }
+        sqrtPriceX96 = uint160((ratio >> 32) + (ratio % (1 << 32) == 0 ? 0 : 1));
         }
     }
 
@@ -308,6 +298,7 @@ library TickMath {
         int24 tickLow = int24((log_sqrt10001 - 3402992956809132418596140100660247210) >> 128);
         int24 tickHi = int24((log_sqrt10001 + 291339464771989622907027621153398088495) >> 128);
 
+<<<<<<< HEAD
         if (tickLow == tickHi) {
             tick = tickLow;
         } else {
@@ -319,4 +310,8 @@ library TickMath {
         }
         }
     }   
+=======
+        tick = tickLow == tickHi ? tickLow : getSqrtRatioAtTick(tickHi) <= sqrtPriceX96 ? tickHi : tickLow;
+    }
+>>>>>>> 1e81dc9 (finish adding conditionals to libraries)
 }
