@@ -1,4 +1,4 @@
-# UniStark (a.k.a Uniswap V3 warped)
+# UniStark (a.k.a Uniswap V3 Warped)
 
 This repository contains the core smart contracts for the [Uniswap V3
 Protocol](https://github.com/Uniswap/v3-core) modified for transpilation by 
@@ -18,7 +18,9 @@ To transpile all of the files:
 warp transpile contract/**/*.sol
 ```
 
-Sit back and enjoy the blinkenlights
+Sit back and enjoy the blinkenlights.
+
+---
 
 This is a demonstration of Warp's capabilities. Kindly note, this is a
 [Nethermind](https://nethermind.io/) project carried out with no affiliation to Uniswap. All of the
