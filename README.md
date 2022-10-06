@@ -5,7 +5,7 @@ Protocol](https://github.com/Uniswap/v3-core) modified for transpilation by
 [Warp](https://github.com/NethermindEth/warp) to [Cairo](https://starknet.io/docs/hello_cairo/index.html#hello-cairo) for
 deployment on [StarkNet](https://starknet.io/).
 
-A diff of this repo to Uniswap's original is here <link to diff>
+A diff of this repo to Uniswap's original [here](https://htmlpreview.github.io/?https://github.com/NethermindEth/UniStark/blob/main/diff/v3-core.diff.html)
 
 In order to transpile them simply [install Warp](https://github.com/NethermindEth/warp/#warp-installation-method-1) and then:
 
