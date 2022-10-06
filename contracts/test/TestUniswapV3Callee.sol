@@ -10,21 +10,10 @@ import '../interfaces/callback/IUniswapV3MintCallback.sol';
 import '../interfaces/callback/IUniswapV3SwapCallback.sol';
 import '../interfaces/callback/IUniswapV3FlashCallback.sol';
 
-import '../interfaces/pool/IUniswapV3PoolActions.sol';
-import '../interfaces/pool/IUniswapV3PoolImmutables.sol';
+import '../interfaces/IUniswapV3Pool.sol';
 
 contract TestUniswapV3Callee is IUniswapV3MintCallback, IUniswapV3SwapCallback, IUniswapV3FlashCallback {
     using SafeCast for uint256;
-
-    function bytesToAddress(bytes memory b, uint240 o) private returns (address x) {
-      return address(bytesToUint(b, o));
-    }
-    function bytesToUint(bytes memory b, uint240 o) private returns (uint x) {
-        uint x_uint;
-        for (uint i = 0; i < 32; i++)
-            x_uint += uint256(uint8(b[o + i])) << 8 * (31 - i);
-        return (x_uint);
-    }
 
     function swapExact0For1(
         address pool,
@@ -32,7 +21,7 @@ contract TestUniswapV3Callee is IUniswapV3MintCallback, IUniswapV3SwapCallback, 
         address recipient,
         uint160 sqrtPriceLimitX96
     ) external {
-        IUniswapV3PoolActions(pool).swap(recipient, true, amount0In.toInt256(), sqrtPriceLimitX96, abi.encode(msg.sender));
+        IUniswapV3Pool(pool).swap(recipient, true, amount0In.toInt256(), sqrtPriceLimitX96, abi.encode(msg.sender));
     }
 
     function swap0ForExact1(
@@ -40,8 +29,8 @@ contract TestUniswapV3Callee is IUniswapV3MintCallback, IUniswapV3SwapCallback, 
         uint256 amount1Out,
         address recipient,
         uint160 sqrtPriceLimitX96
-    ) external returns (int, int) {
-       return IUniswapV3PoolActions(pool).swap(recipient, true, -amount1Out.toInt256(), sqrtPriceLimitX96, abi.encode(msg.sender));
+    ) external {
+        IUniswapV3Pool(pool).swap(recipient, true, -amount1Out.toInt256(), sqrtPriceLimitX96, abi.encode(msg.sender));
     }
 
     function swapExact1For0(
@@ -50,7 +39,7 @@ contract TestUniswapV3Callee is IUniswapV3MintCallback, IUniswapV3SwapCallback, 
         address recipient,
         uint160 sqrtPriceLimitX96
     ) external {
-        IUniswapV3PoolActions(pool).swap(recipient, false, amount1In.toInt256(), sqrtPriceLimitX96, abi.encode(msg.sender));
+        IUniswapV3Pool(pool).swap(recipient, false, amount1In.toInt256(), sqrtPriceLimitX96, abi.encode(msg.sender));
     }
 
     function swap1ForExact0(
@@ -59,7 +48,7 @@ contract TestUniswapV3Callee is IUniswapV3MintCallback, IUniswapV3SwapCallback, 
         address recipient,
         uint160 sqrtPriceLimitX96
     ) external {
-        IUniswapV3PoolActions(pool).swap(recipient, false, -amount0Out.toInt256(), sqrtPriceLimitX96, abi.encode(msg.sender));
+        IUniswapV3Pool(pool).swap(recipient, false, -amount0Out.toInt256(), sqrtPriceLimitX96, abi.encode(msg.sender));
     }
 
     function swapToLowerSqrtPrice(
@@ -67,7 +56,7 @@ contract TestUniswapV3Callee is IUniswapV3MintCallback, IUniswapV3SwapCallback, 
         uint160 sqrtPriceX96,
         address recipient
     ) external {
-        IUniswapV3PoolActions(pool).swap(recipient, true, type(int256).max, sqrtPriceX96, abi.encode(msg.sender));
+        IUniswapV3Pool(pool).swap(recipient, true, type(int256).max, sqrtPriceX96, abi.encode(msg.sender));
     }
 
     function swapToHigherSqrtPrice(
@@ -75,7 +64,7 @@ contract TestUniswapV3Callee is IUniswapV3MintCallback, IUniswapV3SwapCallback, 
         uint160 sqrtPriceX96,
         address recipient
     ) external {
-        IUniswapV3PoolActions(pool).swap(recipient, false, type(int256).max, sqrtPriceX96, abi.encode(msg.sender));
+        IUniswapV3Pool(pool).swap(recipient, false, type(int256).max, sqrtPriceX96, abi.encode(msg.sender));
     }
 
     event SwapCallback(int256 amount0Delta, int256 amount1Delta);
@@ -83,16 +72,16 @@ contract TestUniswapV3Callee is IUniswapV3MintCallback, IUniswapV3SwapCallback, 
     function uniswapV3SwapCallback(
         int256 amount0Delta,
         int256 amount1Delta,
-        bytes memory data
+        bytes calldata data
     ) external override {
-        address sender = bytesToAddress(data, 0);
+        address sender = abi.decode(data, (address));
 
         emit SwapCallback(amount0Delta, amount1Delta);
 
         if (amount0Delta > 0) {
-            IERC20Minimal(IUniswapV3PoolImmutables(msg.sender).token0()).transferFrom(sender, msg.sender, uint256(amount0Delta));
+            IERC20Minimal(IUniswapV3Pool(msg.sender).token0()).transferFrom(sender, msg.sender, uint256(amount0Delta));
         } else if (amount1Delta > 0) {
-            IERC20Minimal(IUniswapV3PoolImmutables(msg.sender).token1()).transferFrom(sender, msg.sender, uint256(amount1Delta));
+            IERC20Minimal(IUniswapV3Pool(msg.sender).token1()).transferFrom(sender, msg.sender, uint256(amount1Delta));
         } else {
             // if both are not gt 0, both must be 0.
             assert(amount0Delta == 0 && amount1Delta == 0);
@@ -105,8 +94,8 @@ contract TestUniswapV3Callee is IUniswapV3MintCallback, IUniswapV3SwapCallback, 
         int24 tickLower,
         int24 tickUpper,
         uint128 amount
-    ) external returns (uint256 amount0, uint256 amount1) {
-        return IUniswapV3PoolActions(pool).mint(recipient, tickLower, tickUpper, amount, abi.encode(msg.sender));
+    ) external {
+        IUniswapV3Pool(pool).mint(recipient, tickLower, tickUpper, amount, abi.encode(msg.sender));
     }
 
     event MintCallback(uint256 amount0Owed, uint256 amount1Owed);
@@ -116,13 +105,13 @@ contract TestUniswapV3Callee is IUniswapV3MintCallback, IUniswapV3SwapCallback, 
         uint256 amount1Owed,
         bytes calldata data
     ) external override {
-        address sender = bytesToAddress(data, 0);
+        address sender = abi.decode(data, (address));
 
         emit MintCallback(amount0Owed, amount1Owed);
         if (amount0Owed > 0)
-            IERC20Minimal(IUniswapV3PoolImmutables(msg.sender).token0()).transferFrom(sender, msg.sender, amount0Owed);
+            IERC20Minimal(IUniswapV3Pool(msg.sender).token0()).transferFrom(sender, msg.sender, amount0Owed);
         if (amount1Owed > 0)
-            IERC20Minimal(IUniswapV3PoolImmutables(msg.sender).token1()).transferFrom(sender, msg.sender, amount1Owed);
+            IERC20Minimal(IUniswapV3Pool(msg.sender).token1()).transferFrom(sender, msg.sender, amount1Owed);
     }
 
     event FlashCallback(uint256 fee0, uint256 fee1);
@@ -135,7 +124,7 @@ contract TestUniswapV3Callee is IUniswapV3MintCallback, IUniswapV3SwapCallback, 
         uint256 pay0,
         uint256 pay1
     ) external {
-        IUniswapV3PoolActions(pool).flash(recipient, amount0, amount1, abi.encode(msg.sender, pay0, pay1));
+        IUniswapV3Pool(pool).flash(recipient, amount0, amount1, abi.encode(msg.sender, pay0, pay1));
     }
 
     function uniswapV3FlashCallback(
@@ -145,12 +134,9 @@ contract TestUniswapV3Callee is IUniswapV3MintCallback, IUniswapV3SwapCallback, 
     ) external override {
         emit FlashCallback(fee0, fee1);
 
-        address sender = bytesToAddress(data, 0);
-        uint pay0 = bytesToUint(data, 32);
-        uint pay1 = bytesToUint(data, 64);
-        // (address sender, uint256 pay0, uint256 pay1) = abi.decode(data, (address, uint256, uint256));
+        (address sender, uint256 pay0, uint256 pay1) = abi.decode(data, (address, uint256, uint256));
 
-        if (pay0 > 0) IERC20Minimal(IUniswapV3PoolImmutables(msg.sender).token0()).transferFrom(sender, msg.sender, pay0);
-        if (pay1 > 0) IERC20Minimal(IUniswapV3PoolImmutables(msg.sender).token1()).transferFrom(sender, msg.sender, pay1);
+        if (pay0 > 0) IERC20Minimal(IUniswapV3Pool(msg.sender).token0()).transferFrom(sender, msg.sender, pay0);
+        if (pay1 > 0) IERC20Minimal(IUniswapV3Pool(msg.sender).token1()).transferFrom(sender, msg.sender, pay1);
     }
 }
