@@ -95,9 +95,11 @@ library Oracle {
         if (last.blockTimestamp == blockTimestamp) return (index, cardinality);
 
         // if the conditions are right, we can bump the cardinality
-        cardinalityUpdated = (cardinalityNext > cardinality && index == (cardinality - 1)) 
-            ? cardinalityNext 
-            : cardinality;
+        if (cardinalityNext > cardinality && index == (cardinality - 1)) {
+            cardinalityUpdated = cardinalityNext;
+        } else {
+            cardinalityUpdated = cardinality;
+        }
 
         indexUpdated = (index + 1) % cardinalityUpdated;
         self[indexUpdated] = transform(last, blockTimestamp, tick, liquidity);
