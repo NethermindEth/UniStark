@@ -17,7 +17,9 @@ contract MockTimeUniswapV3Pool is UniswapV3Pool {
     }
 
     function advanceTime(uint256 by) external {
+        unchecked {
         time += by;
+        }
     }
 
     function _blockTimestamp() internal view override returns (uint32) {
