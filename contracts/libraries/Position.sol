@@ -20,37 +20,20 @@ library Position {
         uint128 tokensOwed0;
         uint128 tokensOwed1;
     }
-    
-    /// warp-cairo
-    /// func CURRENTFUNC(){
-    ///    range_check_ptr: felt,
-    ///    pedersen_ptr: HashBuiltin*,
-    ///}(
-    ///     owner : felt,
-    ///     tickLower : felt,
-    ///     tickUpper : felt,
-    /// ) -> (res: Uint256){
-    ///     from starkware.cairo.common.hash import hash2
-    ///     from warplib.maths.utils import felt_to_uint256
-    ///     let (hash_res_1) = hash2{hash_ptr=pedersen_ptr}(owner, tickLower);
-    ///     let (hash_res_2) = hash2{hash_ptr=pedersen_ptr}(hash_res_1, tickUpper);
-    ///     let (res: Uint256) = felt_to_uint256(hash_res_2);
-    ///     return (res,);
-    ///}
-    function hash_stub_0(address owner, int24 tickLower, int24 tickUpper) internal view returns (bytes32) {
-        return 0;
-    }
 
+    /// @notice Returns the Info struct of a position, given an owner and position boundaries
+    /// @param self The mapping containing all user positions
+    /// @param owner The address of the position owner
+    /// @param tickLower The lower tick boundary of the position
+    /// @param tickUpper The upper tick boundary of the position
+    /// @return position The position info struct of the given owners' position
     function get(
         mapping(bytes32 => Info) storage self,
         address owner,
         int24 tickLower,
         int24 tickUpper
     ) internal view returns (Position.Info storage position) {
-        bytes32 hash = hash_stub_0(owner, tickLower, tickUpper);
-        
-        // position = self[keccak256(abi.encodePacked(owner, tickLower, tickUpper))];
-        position = self[hash];
+        position = self[keccak256(abi.encodePacked(owner, tickLower, tickUpper))];
     }
 
     /// @notice Credits accumulated fees to a user's position
