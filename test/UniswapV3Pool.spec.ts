@@ -1,4 +1,5 @@
-import { ethers, waffle } from 'hardhat'
+// @ts-ignore
+import { ethers, waffle, devnet } from 'hardhat'
 import { BigNumber, BigNumberish, constants, Wallet } from 'ethers'
 import { TestERC20 } from '../typechain/TestERC20'
 import { UniswapV3Factory } from '../typechain/UniswapV3Factory'
@@ -30,6 +31,7 @@ import {
 import { TestUniswapV3Callee } from '../typechain/TestUniswapV3Callee'
 import { TickMathTest } from '../typechain/TickMathTest'
 import { SwapMathTest } from '../typechain/SwapMathTest'
+import {MockTimeUniswapV3PoolDeployer} from '../typechain/MockTimeUniswapV3PoolDeployer'
 
 const createFixtureLoader = waffle.createFixtureLoader
 
@@ -72,11 +74,98 @@ describe('UniswapV3Pool', () => {
   })
 
   beforeEach('deploy fixture', async () => {
-    ;({ token0, token1, token2, factory, createPool, swapTargetCallee: swapTarget } = await loadFixture(poolFixture))
+    // console.log("before fixture")
+    // ;({ token0, token1, token2, factory, createPool, swapTargetCallee: swapTarget } = await loadFixture(poolFixture))
+    // console.log({token0: token0.address})
+    // console.log({token1: token1.address})
+    // console.log({token2: token2.address})
+    // console.log({factory: factory.address})
+    // console.log({swapTargetCallee: swapTarget.address})
+    // const oldCreatePool = createPool
+    // createPool = async (_feeAmount, _tickSpacing) => {
+    //   const pool = await oldCreatePool(_feeAmount, _tickSpacing)
+    //   ;({
+    //     swapToLowerPrice,
+    //     swapToHigherPrice,
+    //     swapExact0For1,
+    //     swap0ForExact1,
+    //     swapExact1For0,
+    //     swap1ForExact0,
+    //     mint,
+    //     flash,
+    //   } = createPoolFunctions({
+    //     token0,
+    //     token1,
+    //     swapTarget,
+    //     pool,
+    //   }))
+    //   minTick = getMinTick(_tickSpacing)
+    //   maxTick = getMaxTick(_tickSpacing)
+    //   feeAmount = _feeAmount
+    //   tickSpacing = _tickSpacing
+    //   return pool
+    // }
 
-    const oldCreatePool = createPool
+    // // default to the 30 bips pool
+    // pool = await createPool(FeeAmount.MEDIUM, TICK_SPACINGS[FeeAmount.MEDIUM])
+    // console.log({adddress: pool.address})
+    // devnet.dump("cocaine");
+    // console.log("dump complete")
+    // throw new Error("We're out boyos")
+
+
+
+
+    await devnet.load("cocaine");
+    // await new Promise(r => setTimeout(r, 400));
+    minTick = getMinTick(TICK_SPACINGS[FeeAmount.MEDIUM])
+    maxTick = getMaxTick(TICK_SPACINGS[FeeAmount.MEDIUM])
+    feeAmount = FeeAmount.MEDIUM
+    tickSpacing = TICK_SPACINGS[FeeAmount.MEDIUM];
+    const MockTimeUniswapV3PoolDeployerFactory = await ethers.getContractFactory('MockTimeUniswapV3PoolDeployer')
+    const poolDeployer = MockTimeUniswapV3PoolDeployerFactory.attach("0x037a297229680497db895b1c58e64d2123c68d8f7b91d085f2e9bc64a071e35a") as MockTimeUniswapV3PoolDeployer;
+    const TestERC20Factory = await ethers.getContractFactory('TestERC20')
+    token0 = TestERC20Factory.attach("0x00cc4ffc5b214d0526f1a52d2ab847b4a1991dbd573a3fe08082236ca7445142") as TestERC20;
+    token1 = TestERC20Factory.attach("0x034d5975e0b15dedcba7db3663cc3933b68b6d71eded1f12a7f4124a5c2c6e3d") as TestERC20;
+    token2 = TestERC20Factory.attach("0x043fc20df5a51dfe77978f39a92bf30956ab1791e52632cbb7319d38ba274e66") as TestERC20;
+    const FactoryFactory = await ethers.getContractFactory("UniswapV3Factory");
+    factory = FactoryFactory.attach("0x05beeb39aa24e15a8f94a2c42eaa0f20ef32610bc176673c4ec6512a171c4403") as UniswapV3Factory;
+    const calleeContractFactory = await ethers.getContractFactory('TestUniswapV3Callee')
+    swapTarget = calleeContractFactory.attach("0x0476d99634da83bbafc93f88eb16df19651244d2ec5e55d114a0361ac2d9927a") as TestUniswapV3Callee;
+    const MockTimeUniswapV3PoolFactory = await ethers.getContractFactory('MockTimeUniswapV3Pool')
+    pool = MockTimeUniswapV3PoolFactory.attach("0x01299e338a4ea46a0ce974a7b1a3c3642d16f55e509c3e887e80d78b5093adde") as MockTimeUniswapV3Pool
+    ;({
+        swapToLowerPrice,
+        swapToHigherPrice,
+        swapExact0For1,
+        swap0ForExact1,
+        swapExact1For0,
+        swap1ForExact0,
+        mint,
+        flash,
+      } = createPoolFunctions({
+        token0,
+        token1,
+        swapTarget,
+        pool,
+      }))
     createPool = async (_feeAmount, _tickSpacing) => {
-      const pool = await oldCreatePool(_feeAmount, _tickSpacing)
+      const mockTimePoolDeployer = (await MockTimeUniswapV3PoolDeployerFactory.deploy()) as MockTimeUniswapV3PoolDeployer
+      const tx = await mockTimePoolDeployer.deploy(
+        factory.address,
+        token0.address,
+        token0.address,
+        _feeAmount,
+        _tickSpacing
+      )
+
+      const receipt = await tx.wait()
+      const poolAddress = receipt.events?.[0].args?.pool as string
+      let pool_ =  MockTimeUniswapV3PoolFactory.attach(poolAddress) as MockTimeUniswapV3Pool
+      minTick = getMinTick(_tickSpacing)
+      maxTick = getMaxTick(_tickSpacing)
+      feeAmount = _feeAmount
+      tickSpacing = _tickSpacing
       ;({
         swapToLowerPrice,
         swapToHigherPrice,
@@ -92,17 +181,12 @@ describe('UniswapV3Pool', () => {
         swapTarget,
         pool,
       }))
-      minTick = getMinTick(_tickSpacing)
-      maxTick = getMaxTick(_tickSpacing)
-      feeAmount = _feeAmount
-      tickSpacing = _tickSpacing
-      return pool
+      return pool_;
     }
 
-    // default to the 30 bips pool
-    pool = await createPool(FeeAmount.MEDIUM, TICK_SPACINGS[FeeAmount.MEDIUM])
   })
 
+  // ✅
   it('constructor initializes immutables', async () => {
     expect(await pool.factory()).to.eq(factory.address)
     expect(await pool.token0()).to.eq(token0.address)
@@ -111,26 +195,32 @@ describe('UniswapV3Pool', () => {
   })
 
   describe('#initialize', () => {
+    // ✅
     it('fails if already initialized', async () => {
       await pool.initialize(encodePriceSqrt(1, 1))
       await expect(pool.initialize(encodePriceSqrt(1, 1))).to.be.reverted
     })
+    // ✅
     it('fails if starting price is too low', async () => {
       await expect(pool.initialize(1)).to.be.revertedWith('R')
       await expect(pool.initialize(MIN_SQRT_RATIO.sub(1))).to.be.revertedWith('R')
     })
-    it.only('fails if starting price is too high', async () => {
+    // ✅
+    it('fails if starting price is too high', async () => {
       await expect(pool.initialize(MAX_SQRT_RATIO)).to.be.revertedWith('R')
       await expect(pool.initialize(BigNumber.from(2).pow(160).sub(1))).to.be.revertedWith('R')
     })
+    // ✅
     it('can be initialized at MIN_SQRT_RATIO', async () => {
       await pool.initialize(MIN_SQRT_RATIO)
       expect((await pool.slot0()).tick).to.eq(getMinTick(1))
     })
+    // ✅
     it('can be initialized at MAX_SQRT_RATIO - 1', async () => {
       await pool.initialize(MAX_SQRT_RATIO.sub(1))
       expect((await pool.slot0()).tick).to.eq(getMaxTick(1) - 1)
     })
+    // ✅
     it('sets initial variables', async () => {
       const price = encodePriceSqrt(1, 2)
       await pool.initialize(price)
@@ -140,6 +230,7 @@ describe('UniswapV3Pool', () => {
       expect(observationIndex).to.eq(0)
       expect((await pool.slot0()).tick).to.eq(-6932)
     })
+    // ✅
     it('initializes the first observations slot', async () => {
       await pool.initialize(encodePriceSqrt(1, 1))
       checkObservationEquals(await pool.observations(0), {
@@ -149,6 +240,7 @@ describe('UniswapV3Pool', () => {
         tickCumulative: 0,
       })
     })
+    // ✅
     it('emits a Initialized event with the input tick', async () => {
       const sqrtPriceX96 = encodePriceSqrt(1, 2)
       await expect(pool.initialize(sqrtPriceX96)).to.emit(pool, 'Initialize').withArgs(sqrtPriceX96, -6932)
@@ -156,26 +248,31 @@ describe('UniswapV3Pool', () => {
   })
 
   describe('#increaseObservationCardinalityNext', () => {
+    // ✅
     it('can only be called after initialize', async () => {
       await expect(pool.increaseObservationCardinalityNext(2)).to.be.revertedWith('LOK')
     })
+    // ✅
     it('emits an event including both old and new', async () => {
       await pool.initialize(encodePriceSqrt(1, 1))
       await expect(pool.increaseObservationCardinalityNext(2))
         .to.emit(pool, 'IncreaseObservationCardinalityNext')
         .withArgs(1, 2)
     })
+    // ✅
     it('does not emit an event for no op call', async () => {
       await pool.initialize(encodePriceSqrt(1, 1))
       await pool.increaseObservationCardinalityNext(3)
       await expect(pool.increaseObservationCardinalityNext(2)).to.not.emit(pool, 'IncreaseObservationCardinalityNext')
     })
+    // ✅
     it('does not change cardinality next if less than current', async () => {
       await pool.initialize(encodePriceSqrt(1, 1))
       await pool.increaseObservationCardinalityNext(3)
       await pool.increaseObservationCardinalityNext(2)
       expect((await pool.slot0()).observationCardinalityNext).to.eq(3)
     })
+    // ✅
     it('increases cardinality and cardinality next first time', async () => {
       await pool.initialize(encodePriceSqrt(1, 1))
       await pool.increaseObservationCardinalityNext(2)
@@ -185,7 +282,8 @@ describe('UniswapV3Pool', () => {
     })
   })
 
-  describe('#mint', () => {
+  describe.only('#mint', () => {
+    // ✅
     it('fails if not initialized', async () => {
       await expect(mint(wallet.address, -tickSpacing, tickSpacing, 1)).to.be.revertedWith('LOK')
     })
@@ -196,18 +294,22 @@ describe('UniswapV3Pool', () => {
       })
 
       describe('failure cases', () => {
+        // ✅
         it('fails if tickLower greater than tickUpper', async () => {
           // should be TLU but...hardhat
           await expect(mint(wallet.address, 1, 0, 1)).to.be.reverted
         })
+        // ✅
         it('fails if tickLower less than min tick', async () => {
           // should be TLM but...hardhat
           await expect(mint(wallet.address, -887273, 0, 1)).to.be.reverted
         })
+        // ✅
         it('fails if tickUpper greater than max tick', async () => {
           // should be TUM but...hardhat
           await expect(mint(wallet.address, 0, 887273, 1)).to.be.reverted
         })
+        // ✅
         it('fails if amount exceeds the max', async () => {
           // these should fail with 'LO' but hardhat is bugged
           const maxLiquidityGross = await pool.maxLiquidityPerTick()
@@ -478,6 +580,7 @@ describe('UniswapV3Pool', () => {
         })
       })
 
+      // ✅
       it('protocol fees accumulate as expected during swap', async () => {
         await pool.setFeeProtocol(6, 6)
 
@@ -490,6 +593,7 @@ describe('UniswapV3Pool', () => {
         expect(token1ProtocolFees).to.eq('5000000000000')
       })
 
+      // ✅
       it('positions are protected before protocol fee is turned on', async () => {
         await mint(wallet.address, minTick + tickSpacing, maxTick - tickSpacing, expandTo18Decimals(1))
         await swapExact0For1(expandTo18Decimals(1).div(10), wallet.address)
@@ -505,6 +609,7 @@ describe('UniswapV3Pool', () => {
         expect(token1ProtocolFees).to.eq(0)
       })
 
+      // ❌
       it('poke is not allowed on uninitialized position', async () => {
         await mint(other.address, minTick + tickSpacing, maxTick - tickSpacing, expandTo18Decimals(1))
         await swapExact0For1(expandTo18Decimals(1).div(10), wallet.address)
@@ -1345,6 +1450,7 @@ describe('UniswapV3Pool', () => {
     })
   })
 
+  // ✅
   // https://github.com/Uniswap/uniswap-v3-core/issues/214
   it('tick transition cannot run twice if zero for one swap ends at fractional price just below tick', async () => {
     pool = await createPool(FeeAmount.MEDIUM, 1)
