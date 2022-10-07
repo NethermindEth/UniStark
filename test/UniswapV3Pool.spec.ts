@@ -318,6 +318,7 @@ describe('UniswapV3Pool', () => {
           await expect(mint(wallet.address, minTick + tickSpacing, maxTick - tickSpacing, maxLiquidityGross)).to.not.be
             .reverted
         })
+        // ✅
         it('fails if total amount at tick exceeds the max', async () => {
           // these should fail with 'LO' but hardhat is bugged
           await mint(wallet.address, minTick + tickSpacing, maxTick - tickSpacing, 1000)
@@ -335,22 +336,26 @@ describe('UniswapV3Pool', () => {
           await expect(mint(wallet.address, minTick + tickSpacing, maxTick - tickSpacing, maxLiquidityGross.sub(1000)))
             .to.not.be.reverted
         })
+        // ✅
         it('fails if amount is 0', async () => {
           await expect(mint(wallet.address, minTick + tickSpacing, maxTick - tickSpacing, 0)).to.be.reverted
         })
       })
 
       describe('success cases', () => {
+        // ✅
         it('initial balances', async () => {
           expect(await token0.balanceOf(pool.address)).to.eq(9996)
           expect(await token1.balanceOf(pool.address)).to.eq(1000)
         })
 
+        // ✅
         it('initial tick', async () => {
           expect((await pool.slot0()).tick).to.eq(-23028)
         })
 
         describe('above current price', () => {
+          // ✅
           it('transfers token0 only', async () => {
             await expect(mint(wallet.address, -22980, 0, 10000))
               .to.emit(token0, 'Transfer')
