@@ -282,7 +282,7 @@ describe('UniswapV3Pool', () => {
     })
   })
 
-  describe.only('#mint', () => {
+  describe('#mint', () => {
     // ✅
     it('fails if not initialized', async () => {
       await expect(mint(wallet.address, -tickSpacing, tickSpacing, 1)).to.be.revertedWith('LOK')
@@ -382,7 +382,7 @@ describe('UniswapV3Pool', () => {
           })
 
           // ❌ Reason: static call doesn't set msg.sender
-          it('removing works', async () => {
+          it.only('removing works', async () => {
             await mint(wallet.address, -240, 0, 10000)
             await pool.burn(-240, 0, 10000)
             const { amount0, amount1 } = await pool.callStatic.collect(wallet.address, -240, 0, MaxUint128, MaxUint128)
@@ -509,7 +509,7 @@ describe('UniswapV3Pool', () => {
           })
 
           // ❌ Reason: static call doesn't set msg.sender
-          it('removing works', async () => {
+          it.only('removing works', async () => {
             await mint(wallet.address, minTick + tickSpacing, maxTick - tickSpacing, 100)
             await pool.burn(minTick + tickSpacing, maxTick - tickSpacing, 100)
             const { amount0, amount1 } = await pool.callStatic.collect(
@@ -570,7 +570,7 @@ describe('UniswapV3Pool', () => {
           })
 
           // ❌ Reason: static call doesn't set msg.sender
-          it('removing works', async () => {
+          it.only('removing works', async () => {
             await mint(wallet.address, -46080, -46020, 10000)
             await pool.burn(-46080, -46020, 10000)
             const { amount0, amount1 } = await pool.callStatic.collect(
@@ -632,7 +632,7 @@ describe('UniswapV3Pool', () => {
         expect(token1ProtocolFees).to.eq(0)
       })
 
-      // ❌
+      // ✅
       it('poke is not allowed on uninitialized position', async () => {
         await mint(other.address, minTick + tickSpacing, maxTick - tickSpacing, expandTo18Decimals(1))
         await swapExact0For1(expandTo18Decimals(1).div(10), wallet.address)
