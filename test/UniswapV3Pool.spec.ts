@@ -365,12 +365,14 @@ describe('UniswapV3Pool', () => {
             expect(await token1.balanceOf(pool.address)).to.eq(1000)
           })
 
+          // ✅
           it('max tick with max leverage', async () => {
             await mint(wallet.address, maxTick - tickSpacing, maxTick, BigNumber.from(2).pow(102))
             expect(await token0.balanceOf(pool.address)).to.eq(9996 + 828011525)
             expect(await token1.balanceOf(pool.address)).to.eq(1000)
           })
 
+          // ✅
           it('works for max tick', async () => {
             await expect(mint(wallet.address, -22980, maxTick, 10000))
               .to.emit(token0, 'Transfer')
@@ -379,6 +381,7 @@ describe('UniswapV3Pool', () => {
             expect(await token1.balanceOf(pool.address)).to.eq(1000)
           })
 
+          // ❌ Reason: static call doesn't set msg.sender
           it('removing works', async () => {
             await mint(wallet.address, -240, 0, 10000)
             await pool.burn(-240, 0, 10000)
@@ -387,6 +390,7 @@ describe('UniswapV3Pool', () => {
             expect(amount1, 'amount1').to.eq(0)
           })
 
+          // ✅
           it('adds liquidity to liquidityGross', async () => {
             await mint(wallet.address, -240, 0, 100)
             expect((await pool.ticks(-240)).liquidityGross).to.eq(100)
@@ -405,6 +409,7 @@ describe('UniswapV3Pool', () => {
             expect((await pool.ticks(tickSpacing * 2)).liquidityGross).to.eq(60)
           })
 
+          // ✅
           it('removes liquidity from liquidityGross', async () => {
             await mint(wallet.address, -240, 0, 100)
             await mint(wallet.address, -240, 0, 40)
@@ -413,6 +418,7 @@ describe('UniswapV3Pool', () => {
             expect((await pool.ticks(0)).liquidityGross).to.eq(50)
           })
 
+          // ✅
           it('clears tick lower if last position is removed', async () => {
             await mint(wallet.address, -240, 0, 100)
             await pool.burn(-240, 0, 100)
@@ -422,6 +428,7 @@ describe('UniswapV3Pool', () => {
             expect(feeGrowthOutside1X128).to.eq(0)
           })
 
+          // ✅
           it('clears tick upper if last position is removed', async () => {
             await mint(wallet.address, -240, 0, 100)
             await pool.burn(-240, 0, 100)
@@ -430,6 +437,7 @@ describe('UniswapV3Pool', () => {
             expect(feeGrowthOutside0X128).to.eq(0)
             expect(feeGrowthOutside1X128).to.eq(0)
           })
+          // ✅
           it('only clears the tick that is not used at all', async () => {
             await mint(wallet.address, -240, 0, 100)
             await mint(wallet.address, -tickSpacing, 0, 250)
@@ -444,7 +452,7 @@ describe('UniswapV3Pool', () => {
             expect(feeGrowthOutside0X128).to.eq(0)
             expect(feeGrowthOutside1X128).to.eq(0)
           })
-
+          // ✅
           it('does not write an observation', async () => {
             checkObservationEquals(await pool.observations(0), {
               tickCumulative: 0,
@@ -464,6 +472,7 @@ describe('UniswapV3Pool', () => {
         })
 
         describe('including current price', () => {
+          // ✅
           it('price within range: transfers current price of both tokens', async () => {
             await expect(mint(wallet.address, minTick + tickSpacing, maxTick - tickSpacing, 100))
               .to.emit(token0, 'Transfer')
@@ -474,18 +483,21 @@ describe('UniswapV3Pool', () => {
             expect(await token1.balanceOf(pool.address)).to.eq(1000 + 32)
           })
 
+          // ✅
           it('initializes lower tick', async () => {
             await mint(wallet.address, minTick + tickSpacing, maxTick - tickSpacing, 100)
             const { liquidityGross } = await pool.ticks(minTick + tickSpacing)
             expect(liquidityGross).to.eq(100)
           })
 
+          // ✅
           it('initializes upper tick', async () => {
             await mint(wallet.address, minTick + tickSpacing, maxTick - tickSpacing, 100)
             const { liquidityGross } = await pool.ticks(maxTick - tickSpacing)
             expect(liquidityGross).to.eq(100)
           })
 
+          // ✅
           it('works for min/max tick', async () => {
             await expect(mint(wallet.address, minTick, maxTick, 10000))
               .to.emit(token0, 'Transfer')
@@ -496,6 +508,7 @@ describe('UniswapV3Pool', () => {
             expect(await token1.balanceOf(pool.address)).to.eq(1000 + 3163)
           })
 
+          // ❌ Reason: static call doesn't set msg.sender
           it('removing works', async () => {
             await mint(wallet.address, minTick + tickSpacing, maxTick - tickSpacing, 100)
             await pool.burn(minTick + tickSpacing, maxTick - tickSpacing, 100)
@@ -510,6 +523,7 @@ describe('UniswapV3Pool', () => {
             expect(amount1, 'amount1').to.eq(31)
           })
 
+          // ✅
           it('writes an observation', async () => {
             checkObservationEquals(await pool.observations(0), {
               tickCumulative: 0,
@@ -529,6 +543,7 @@ describe('UniswapV3Pool', () => {
         })
 
         describe('below current price', () => {
+          // ✅
           it('transfers token1 only', async () => {
             await expect(mint(wallet.address, -46080, -23040, 10000))
               .to.emit(token1, 'Transfer')
@@ -538,12 +553,14 @@ describe('UniswapV3Pool', () => {
             expect(await token1.balanceOf(pool.address)).to.eq(1000 + 2162)
           })
 
+          // ✅
           it('min tick with max leverage', async () => {
             await mint(wallet.address, minTick, minTick + tickSpacing, BigNumber.from(2).pow(102))
             expect(await token0.balanceOf(pool.address)).to.eq(9996)
             expect(await token1.balanceOf(pool.address)).to.eq(1000 + 828011520)
           })
 
+          // ✅
           it('works for min tick', async () => {
             await expect(mint(wallet.address, minTick, -23040, 10000))
               .to.emit(token1, 'Transfer')
@@ -552,6 +569,7 @@ describe('UniswapV3Pool', () => {
             expect(await token1.balanceOf(pool.address)).to.eq(1000 + 3161)
           })
 
+          // ❌ Reason: static call doesn't set msg.sender
           it('removing works', async () => {
             await mint(wallet.address, -46080, -46020, 10000)
             await pool.burn(-46080, -46020, 10000)
