@@ -96,7 +96,7 @@ describe('UniswapV3Factory', () => {
   }
 
   describe('#createPool', () => {
-    it.only('succeeds for low fee pool', async () => {
+    it('succeeds for low fee pool', async () => {
       await createAndCheckPool(TEST_ADDRESSES, FeeAmount.LOW)
     })
 

@@ -45,7 +45,7 @@ export function getCreate2Address(
   const [token0, token1] = tokenA.toLowerCase() < tokenB.toLowerCase() ? [tokenA, tokenB] : [tokenB, tokenA]
 
   const args = [BigInt(token0).toString(16).padStart(64, '0'), BigInt(token1).toString(16).padStart(64, '0'),
-  BigInt(fee).toString(16).padStart(6, '0')].join('');
+  BigInt(fee).toString(16).padStart(64, '0')].join('');
 
   const salt = utils.keccak256(`0x${args}`).slice(0,-4)
 
