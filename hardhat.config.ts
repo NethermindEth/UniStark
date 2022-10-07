@@ -25,7 +25,7 @@ export default {
       args: ["--seed", "0", "--timeout", "10000"],
 
       // stdout: "logs/stdout.log" <- dumps stdout to the file
-      stdout: "/tmp/logos", // <- logs stdout to the terminal
+      stdout: `.${port}.log`, // <- logs stdout to the terminal
       // stderr: "logs/stderr.log" <- dumps stderr to the file
       stderr: "STDERR"  // <- logs stderr to the terminal
     },
