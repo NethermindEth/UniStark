@@ -47,6 +47,7 @@ library Position {
         uint256 feeGrowthInside0X128,
         uint256 feeGrowthInside1X128
     ) internal {
+        unchecked {
         Info memory _self = self;
 
         uint128 liquidityNext;
@@ -83,6 +84,7 @@ library Position {
             // overflow is acceptable, have to withdraw before you hit type(uint128).max fees
             self.tokensOwed0 += tokensOwed0;
             self.tokensOwed1 += tokensOwed1;
+        }
         }
     }
 }

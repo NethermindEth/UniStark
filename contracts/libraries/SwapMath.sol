@@ -34,6 +34,7 @@ library SwapMath {
             uint256 feeAmount
         )
     {
+        unchecked {
         bool zeroForOne = sqrtRatioCurrentX96 >= sqrtRatioTargetX96;
         bool exactIn = amountRemaining >= 0;
 
@@ -137,6 +138,7 @@ library SwapMath {
             feeAmount = uint256(amountRemaining) - amountIn;
         } else {
             feeAmount = FullMath.mulDivRoundingUp(amountIn, feePips, 1e6 - feePips);
+        }
         }
     }
 }

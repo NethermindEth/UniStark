@@ -42,10 +42,12 @@ library Tick {
     ///     e.g., a tickSpacing of 3 requires ticks to be initialized every 3rd tick i.e., ..., -6, -3, 0, 3, 6, ...
     /// @return The max liquidity per tick
     function tickSpacingToMaxLiquidityPerTick(int24 tickSpacing) internal pure returns (uint128) {
+        unchecked {   
         int24 minTick = (TickMath.MIN_TICK / tickSpacing) * tickSpacing;
         int24 maxTick = (TickMath.MAX_TICK / tickSpacing) * tickSpacing;
         uint24 numTicks = uint24((maxTick - minTick) / tickSpacing) + 1;
         return type(uint128).max / numTicks;
+        }
     }
 
     /// @notice Retrieves fee growth data
@@ -178,6 +180,7 @@ library Tick {
         int56 tickCumulative,
         uint32 time
     ) internal returns (int128 liquidityNet) {
+        unchecked {
         Tick.Info storage info = self[tick];
         info.feeGrowthOutside0X128 = feeGrowthGlobal0X128 - info.feeGrowthOutside0X128;
         info.feeGrowthOutside1X128 = feeGrowthGlobal1X128 - info.feeGrowthOutside1X128;
@@ -185,5 +188,6 @@ library Tick {
         info.tickCumulativeOutside = tickCumulative - info.tickCumulativeOutside;
         info.secondsOutside = time - info.secondsOutside;
         liquidityNet = info.liquidityNet;
+        }
     }
 }

@@ -21,6 +21,7 @@ library TickMath {
     /// @return sqrtPriceX96 A Fixed point Q64.96 number representing the sqrt of the ratio of the two assets (token1/token0)
     /// at the given tick
     function getSqrtRatioAtTick(int24 tick) internal pure returns (uint160 sqrtPriceX96) {
+        unchecked {
         uint256 absTick = 0;
         if (tick < 0) {
             absTick = uint256(-int256(tick));
@@ -61,6 +62,7 @@ library TickMath {
         } else {
             sqrtPriceX96 = uint160((ratio >> 32) + 1);
         }
+        }
     }
 
     /// @notice Calculates the greatest tick value such that getRatioAtTick(tick) <= ratio
@@ -69,6 +71,7 @@ library TickMath {
     /// @param sqrtPriceX96 The sqrt ratio for which to compute the tick as a Q64.96
     /// @return tick The greatest tick for which the ratio is less than or equal to the input ratio
     function getTickAtSqrtRatio(uint160 sqrtPriceX96) internal pure returns (int24 tick) {
+        unchecked {
         // second inequality must be < because the price can never reach the price at the max tick
         require(sqrtPriceX96 >= MIN_SQRT_RATIO && sqrtPriceX96 < MAX_SQRT_RATIO, 'R');
         uint256 ratio = uint256(sqrtPriceX96) << 32;
@@ -314,5 +317,6 @@ library TickMath {
                 tick = tickLow;
             }
         }
-    }
+        }
+    }   
 }
