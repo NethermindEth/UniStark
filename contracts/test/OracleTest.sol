@@ -31,7 +31,9 @@ contract OracleTest {
     }
 
     function advanceTime(uint32 by) public {
-        time += by;
+        unchecked {
+        time += by;   
+        }
     }
 
     struct UpdateParams {
@@ -49,6 +51,7 @@ contract OracleTest {
     }
 
     function batchUpdate(UpdateParams[] calldata params) external {
+        unchecked {
         // sload everything
         int24 _tick = tick;
         uint128 _liquidity = liquidity;
@@ -77,6 +80,7 @@ contract OracleTest {
         index = _index;
         cardinality = _cardinality;
         time = _time;
+        }
     }
 
     function grow(uint16 _cardinalityNext) external {
