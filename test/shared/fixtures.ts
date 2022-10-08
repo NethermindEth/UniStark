@@ -76,7 +76,6 @@ export const poolFixture: Fixture<PoolFixture> = async function (): Promise<Pool
     swapTargetRouter,
     createPool: async (fee, tickSpacing, firstToken = token0, secondToken = token1) => {
       const mockTimePoolDeployer = (await MockTimeUniswapV3PoolDeployerFactory.deploy()) as MockTimeUniswapV3PoolDeployer
-      console.log({deployer: mockTimePoolDeployer.address})
       const tx = await mockTimePoolDeployer.deploy(
         factory.address,
         firstToken.address,
