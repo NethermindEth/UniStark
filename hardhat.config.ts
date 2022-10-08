@@ -6,6 +6,9 @@ import '@nomiclabs/hardhat-waffle'
 import '@nomiclabs/hardhat-etherscan'
 import 'hardhat-warp'
 
+import 'mocha-progress-reporter';
+reporter.config({ hooks: false });
+
 const port = (Math.floor(Math.random() * 1000) + 5000).toString()
 
 export default {
@@ -88,6 +91,8 @@ export default {
     },
   },
   mocha: {
-    timeout: 100000000
+    timeout: 100000000,
+    reporter: 'mocha-progress-reporter'
+
   }
 }
