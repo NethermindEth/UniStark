@@ -44,15 +44,17 @@ describe('UniswapV3Factory', () => {
     expect(await factory.owner()).to.eq(wallet.address)
   })
 
-  it('factory bytecode size', async () => {
-    expect(((await waffle.provider.getCode(factory.address)).length - 2) / 2).to.matchSnapshot()
-  })
+  // ❌ Reason: Bytecode is different on StarkNet
+  // it('factory bytecode size', async () => {
+  //   expect(((await waffle.provider.getCode(factory.address)).length - 2) / 2).to.matchSnapshot()
+  // })
 
-  it('pool bytecode size', async () => {
-    await factory.createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[1], FeeAmount.MEDIUM)
-    const poolAddress = getCreate2Address(factory.address, TEST_ADDRESSES, FeeAmount.MEDIUM, poolBytecode)
-    expect(((await waffle.provider.getCode(poolAddress)).length - 2) / 2).to.matchSnapshot()
-  })
+  // ❌ Reason: Bytecode is different on StarkNet
+  // it('pool bytecode size', async () => {
+  //   await factory.createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[1], FeeAmount.MEDIUM)
+  //   const poolAddress = getCreate2Address(factory.address, TEST_ADDRESSES, FeeAmount.MEDIUM, poolBytecode)
+  //   expect(((await waffle.provider.getCode(poolAddress)).length - 2) / 2).to.matchSnapshot()
+  // })
 
   it('initial enabled fee amounts', async () => {
     expect(await factory.feeAmountTickSpacing(FeeAmount.LOW)).to.eq(TICK_SPACINGS[FeeAmount.LOW])
@@ -65,27 +67,18 @@ describe('UniswapV3Factory', () => {
     feeAmount: FeeAmount,
     tickSpacing: number = TICK_SPACINGS[feeAmount]
   ) {
-    console.log("entered")
     const create2Address = getCreate2Address(factory.address, tokens, feeAmount, poolBytecode)
     const create = factory.createPool(tokens[0], tokens[1], feeAmount)
-    const rec = await(await create).wait()
-    console.log("events", JSON.stringify(rec.events))
 
-
-    console.log("create2Address",create2Address)
-    console.log("aaaaah")
     await expect(create)
       .to.emit(factory, 'PoolCreated')
       .withArgs(TEST_ADDRESSES[0], TEST_ADDRESSES[1], feeAmount, tickSpacing, create2Address)
 
-    console.log("here")
     await expect(factory.createPool(tokens[0], tokens[1], feeAmount)).to.be.reverted
     await expect(factory.createPool(tokens[1], tokens[0], feeAmount)).to.be.reverted
-    console.log("later")
     expect(await factory.getPool(tokens[0], tokens[1], feeAmount), 'getPool in order').to.eq(create2Address)
     expect(await factory.getPool(tokens[1], tokens[0], feeAmount), 'getPool in reverse').to.eq(create2Address)
 
-    console.log("even later")
     const poolContractFactory = await ethers.getContractFactory('UniswapV3Pool')
     const pool = poolContractFactory.attach(create2Address)
     expect(await pool.factory(), 'pool factory address').to.eq(factory.address)
@@ -127,9 +120,10 @@ describe('UniswapV3Factory', () => {
       await expect(factory.createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[1], 250)).to.be.reverted
     })
 
-    it('gas', async () => {
-      await snapshotGasCost(factory.createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[1], FeeAmount.MEDIUM))
-    })
+    // ❌ Reason: Gas works differently on StarkNet
+    // it('gas', async () => {
+    //   await snapshotGasCost(factory.createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[1], FeeAmount.MEDIUM))
+    // })
   })
 
   describe('#setOwner', () => {

@@ -5,7 +5,8 @@ import '@nomiclabs/hardhat-ethers'
 import '@nomiclabs/hardhat-waffle'
 import '@nomiclabs/hardhat-etherscan'
 import 'hardhat-warp'
-import "@shardlabs/starknet-hardhat-plugin";
+
+const port = (Math.floor(Math.random() * 1000) + 5000).toString()
 
 export default {
   starknet: {
@@ -13,22 +14,22 @@ export default {
   },
   networks: {
     integratedDevnet: {
-      url: "http://127.0.0.1:5050",
+      url: `http://127.0.0.1:${port}`,
 
       // venv: "active" <- for the active virtual environment with installed starknet-devnet
       // venv: "path/to/venv" <- for env with installed starknet-devnet (created with e.g. `python -m venv path/to/venv`)
-      venv: "../warp/venv",
+      venv: "../../starknet-devnet/.env",
 
 
       // optional devnet CLI arguments
-      args: ["--timeout", "10000"],
+      args: ["--seed", "0", "--timeout", "10000"],
 
       // stdout: "logs/stdout.log" <- dumps stdout to the file
-      stdout: "/dev/null", // <- logs stdout to the terminal
+      stdout: `.${port}.log`, // <- logs stdout to the terminal
       // stderr: "logs/stderr.log" <- dumps stderr to the file
       stderr: "STDERR"  // <- logs stderr to the terminal
     },
-  
+
     hardhat: {
       allowUnlimitedContractSize: false,
     },
@@ -85,9 +86,6 @@ export default {
         bytecodeHash: 'none',
       },
     },
-  },
-  paths: {
-    warp: '/Users/jorik/dev/nethermind/warp/bin/warp'
   },
   mocha: {
     timeout: 100000000
