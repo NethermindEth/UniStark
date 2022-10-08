@@ -1,6 +1,5 @@
 import { Wallet } from 'ethers'
-//@ts-ignore
-import { ethers, waffle, devnet} from 'hardhat'
+import { ethers, waffle } from 'hardhat'
 import { UniswapV3Factory } from '../typechain/UniswapV3Factory'
 import { expect } from './shared/expect'
 import snapshotGasCost from './shared/snapshotGasCost'
@@ -45,15 +44,17 @@ describe('UniswapV3Factory', () => {
     expect(await factory.owner()).to.eq(wallet.address)
   })
 
-  it('factory bytecode size', async () => {
-    expect(((await waffle.provider.getCode(factory.address)).length - 2) / 2).to.matchSnapshot()
-  })
+  // ❌ Reason: Bytecode is different on StarkNet
+  // it('factory bytecode size', async () => {
+  //   expect(((await waffle.provider.getCode(factory.address)).length - 2) / 2).to.matchSnapshot()
+  // })
 
-  it('pool bytecode size', async () => {
-    await factory.createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[1], FeeAmount.MEDIUM)
-    const poolAddress = getCreate2Address(factory.address, TEST_ADDRESSES, FeeAmount.MEDIUM, poolBytecode)
-    expect(((await waffle.provider.getCode(poolAddress)).length - 2) / 2).to.matchSnapshot()
-  })
+  // ❌ Reason: Bytecode is different on StarkNet
+  // it('pool bytecode size', async () => {
+  //   await factory.createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[1], FeeAmount.MEDIUM)
+  //   const poolAddress = getCreate2Address(factory.address, TEST_ADDRESSES, FeeAmount.MEDIUM, poolBytecode)
+  //   expect(((await waffle.provider.getCode(poolAddress)).length - 2) / 2).to.matchSnapshot()
+  // })
 
   it('initial enabled fee amounts', async () => {
     expect(await factory.feeAmountTickSpacing(FeeAmount.LOW)).to.eq(TICK_SPACINGS[FeeAmount.LOW])
@@ -119,9 +120,10 @@ describe('UniswapV3Factory', () => {
       await expect(factory.createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[1], 250)).to.be.reverted
     })
 
-    it('gas', async () => {
-      await snapshotGasCost(factory.createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[1], FeeAmount.MEDIUM))
-    })
+    // ❌ Reason: Gas works differently on StarkNet
+    // it('gas', async () => {
+    //   await snapshotGasCost(factory.createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[1], FeeAmount.MEDIUM))
+    // })
   })
 
   describe('#setOwner', () => {
