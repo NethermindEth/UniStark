@@ -7,3 +7,6 @@ typechain-types/
 dist/
 warp_output/
 benchmark.json
+*.log
+*fixture.*.snapshot
+*.CALL_ROLLBACK.snapshot
