@@ -6,6 +6,11 @@ import '@nomiclabs/hardhat-waffle'
 import '@nomiclabs/hardhat-etherscan'
 import 'hardhat-warp'
 
+require('mocha-unfunk-reporter').option({
+  reportPending: true,
+  stackFilter: false,
+});
+
 const port = (Math.floor(Math.random() * 1000) + 5000).toString()
 
 export default {
@@ -88,6 +93,8 @@ export default {
     },
   },
   mocha: {
-    timeout: 100000000
+    timeout: 100000000,
+    reporter: 'mocha-unfunk-reporter'
+
   }
 }
