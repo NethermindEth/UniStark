@@ -45,7 +45,7 @@
     "hardhat-warp": "link:../hardhat-warp",
     "mocha": "^6.2.2",
     "mocha-chai-jest-snapshot": "^1.1.0",
-    "mocha-unfunk-reporter": "^0.4.0",
+    "mocha-progress-reporter": "^1.1.3",
     "prettier": "^2.0.5",
     "prettier-plugin-solidity": "^1.0.0-alpha.59",
     "solhint": "^3.2.1",
