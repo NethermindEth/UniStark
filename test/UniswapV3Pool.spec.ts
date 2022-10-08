@@ -382,7 +382,7 @@ describe('UniswapV3Pool', () => {
           })
 
           // ❌ Reason: static call doesn't set msg.sender
-          it.only('removing works', async () => {
+          it('removing works', async () => {
             await mint(wallet.address, -240, 0, 10000)
             await pool.burn(-240, 0, 10000)
             const { amount0, amount1 } = await pool.callStatic.collect(wallet.address, -240, 0, MaxUint128, MaxUint128)
@@ -509,7 +509,7 @@ describe('UniswapV3Pool', () => {
           })
 
           // ❌ Reason: static call doesn't set msg.sender
-          it.only('removing works', async () => {
+          it('removing works', async () => {
             await mint(wallet.address, minTick + tickSpacing, maxTick - tickSpacing, 100)
             await pool.burn(minTick + tickSpacing, maxTick - tickSpacing, 100)
             const { amount0, amount1 } = await pool.callStatic.collect(
@@ -570,7 +570,7 @@ describe('UniswapV3Pool', () => {
           })
 
           // ❌ Reason: static call doesn't set msg.sender
-          it.only('removing works', async () => {
+          it('removing works', async () => {
             await mint(wallet.address, -46080, -46020, 10000)
             await pool.burn(-46080, -46020, 10000)
             const { amount0, amount1 } = await pool.callStatic.collect(
@@ -804,6 +804,7 @@ describe('UniswapV3Pool', () => {
       await initializeAtZeroTick(pool)
     })
 
+    // ✅
     it('mint to the right of the current price', async () => {
       const liquidityDelta = 1000
       const lowerTick = tickSpacing
@@ -1068,6 +1069,7 @@ describe('UniswapV3Pool', () => {
       await pool.initialize(encodePriceSqrt(1, 1))
     })
 
+    // ✅
     it('works with multiple LPs', async () => {
       await mint(wallet.address, minTick, maxTick, expandTo18Decimals(1))
       await mint(wallet.address, minTick + tickSpacing, maxTick - tickSpacing, expandTo18Decimals(2))
@@ -1458,6 +1460,7 @@ describe('UniswapV3Pool', () => {
             .to.not.emit(token1, 'Transfer')
           expect((await pool.slot0()).tick).to.eq(120196)
         })
+        // ✅
         it('swapping across gaps works in 0 for 1 direction', async () => {
           const liquidityAmount = expandTo18Decimals(1).div(4)
           await mint(wallet.address, -121200, -120000, liquidityAmount)
