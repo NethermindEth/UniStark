@@ -74,98 +74,10 @@ describe('UniswapV3Pool', () => {
   })
 
   beforeEach('deploy fixture', async () => {
-    // console.log("before fixture")
-    // ;({ token0, token1, token2, factory, createPool, swapTargetCallee: swapTarget } = await loadFixture(poolFixture))
-    // console.log({token0: token0.address})
-    // console.log({token1: token1.address})
-    // console.log({token2: token2.address})
-    // console.log({factory: factory.address})
-    // console.log({swapTargetCallee: swapTarget.address})
-    // const oldCreatePool = createPool
-    // createPool = async (_feeAmount, _tickSpacing) => {
-    //   const pool = await oldCreatePool(_feeAmount, _tickSpacing)
-    //   ;({
-    //     swapToLowerPrice,
-    //     swapToHigherPrice,
-    //     swapExact0For1,
-    //     swap0ForExact1,
-    //     swapExact1For0,
-    //     swap1ForExact0,
-    //     mint,
-    //     flash,
-    //   } = createPoolFunctions({
-    //     token0,
-    //     token1,
-    //     swapTarget,
-    //     pool,
-    //   }))
-    //   minTick = getMinTick(_tickSpacing)
-    //   maxTick = getMaxTick(_tickSpacing)
-    //   feeAmount = _feeAmount
-    //   tickSpacing = _tickSpacing
-    //   return pool
-    // }
-
-    // // default to the 30 bips pool
-    // pool = await createPool(FeeAmount.MEDIUM, TICK_SPACINGS[FeeAmount.MEDIUM])
-    // console.log({adddress: pool.address})
-    // devnet.dump("cocaine");
-    // console.log("dump complete")
-    // throw new Error("We're out boyos")
-
-
-
-
-    await devnet.load("cocaine");
-    // await new Promise(r => setTimeout(r, 400));
-    minTick = getMinTick(TICK_SPACINGS[FeeAmount.MEDIUM])
-    maxTick = getMaxTick(TICK_SPACINGS[FeeAmount.MEDIUM])
-    feeAmount = FeeAmount.MEDIUM
-    tickSpacing = TICK_SPACINGS[FeeAmount.MEDIUM];
-    const MockTimeUniswapV3PoolDeployerFactory = await ethers.getContractFactory('MockTimeUniswapV3PoolDeployer')
-    const poolDeployer = MockTimeUniswapV3PoolDeployerFactory.attach("0x037a297229680497db895b1c58e64d2123c68d8f7b91d085f2e9bc64a071e35a") as MockTimeUniswapV3PoolDeployer;
-    const TestERC20Factory = await ethers.getContractFactory('TestERC20')
-    token0 = TestERC20Factory.attach("0x00cc4ffc5b214d0526f1a52d2ab847b4a1991dbd573a3fe08082236ca7445142") as TestERC20;
-    token1 = TestERC20Factory.attach("0x034d5975e0b15dedcba7db3663cc3933b68b6d71eded1f12a7f4124a5c2c6e3d") as TestERC20;
-    token2 = TestERC20Factory.attach("0x043fc20df5a51dfe77978f39a92bf30956ab1791e52632cbb7319d38ba274e66") as TestERC20;
-    const FactoryFactory = await ethers.getContractFactory("UniswapV3Factory");
-    factory = FactoryFactory.attach("0x05beeb39aa24e15a8f94a2c42eaa0f20ef32610bc176673c4ec6512a171c4403") as UniswapV3Factory;
-    const calleeContractFactory = await ethers.getContractFactory('TestUniswapV3Callee')
-    swapTarget = calleeContractFactory.attach("0x0476d99634da83bbafc93f88eb16df19651244d2ec5e55d114a0361ac2d9927a") as TestUniswapV3Callee;
-    const MockTimeUniswapV3PoolFactory = await ethers.getContractFactory('MockTimeUniswapV3Pool')
-    pool = MockTimeUniswapV3PoolFactory.attach("0x01299e338a4ea46a0ce974a7b1a3c3642d16f55e509c3e887e80d78b5093adde") as MockTimeUniswapV3Pool
-    ;({
-        swapToLowerPrice,
-        swapToHigherPrice,
-        swapExact0For1,
-        swap0ForExact1,
-        swapExact1For0,
-        swap1ForExact0,
-        mint,
-        flash,
-      } = createPoolFunctions({
-        token0,
-        token1,
-        swapTarget,
-        pool,
-      }))
+    ;({ token0, token1, token2, factory, createPool, swapTargetCallee: swapTarget } = await loadFixture(poolFixture))
+    const oldCreatePool = createPool
     createPool = async (_feeAmount, _tickSpacing) => {
-      const mockTimePoolDeployer = (await MockTimeUniswapV3PoolDeployerFactory.deploy()) as MockTimeUniswapV3PoolDeployer
-      const tx = await mockTimePoolDeployer.deploy(
-        factory.address,
-        token0.address,
-        token0.address,
-        _feeAmount,
-        _tickSpacing
-      )
-
-      const receipt = await tx.wait()
-      const poolAddress = receipt.events?.[0].args?.pool as string
-      let pool_ =  MockTimeUniswapV3PoolFactory.attach(poolAddress) as MockTimeUniswapV3Pool
-      minTick = getMinTick(_tickSpacing)
-      maxTick = getMaxTick(_tickSpacing)
-      feeAmount = _feeAmount
-      tickSpacing = _tickSpacing
+      const pool = await oldCreatePool(_feeAmount, _tickSpacing)
       ;({
         swapToLowerPrice,
         swapToHigherPrice,
@@ -181,9 +93,15 @@ describe('UniswapV3Pool', () => {
         swapTarget,
         pool,
       }))
-      return pool_;
+      minTick = getMinTick(_tickSpacing)
+      maxTick = getMaxTick(_tickSpacing)
+      feeAmount = _feeAmount
+      tickSpacing = _tickSpacing
+      return pool
     }
 
+    // default to the 30 bips pool
+    pool = await createPool(FeeAmount.MEDIUM, TICK_SPACINGS[FeeAmount.MEDIUM])
   })
 
   // ✅
@@ -381,7 +299,7 @@ describe('UniswapV3Pool', () => {
             expect(await token1.balanceOf(pool.address)).to.eq(1000)
           })
 
-          // ❌ Reason: static call doesn't set msg.sender
+          // ✅
           it('removing works', async () => {
             await mint(wallet.address, -240, 0, 10000)
             await pool.burn(-240, 0, 10000)
@@ -508,7 +426,7 @@ describe('UniswapV3Pool', () => {
             expect(await token1.balanceOf(pool.address)).to.eq(1000 + 3163)
           })
 
-          // ❌ Reason: static call doesn't set msg.sender
+          // ✅
           it('removing works', async () => {
             await mint(wallet.address, minTick + tickSpacing, maxTick - tickSpacing, 100)
             await pool.burn(minTick + tickSpacing, maxTick - tickSpacing, 100)
@@ -569,7 +487,7 @@ describe('UniswapV3Pool', () => {
             expect(await token1.balanceOf(pool.address)).to.eq(1000 + 3161)
           })
 
-          // ❌ Reason: static call doesn't set msg.sender
+          // ✅
           it('removing works', async () => {
             await mint(wallet.address, -46080, -46020, 10000)
             await pool.burn(-46080, -46020, 10000)

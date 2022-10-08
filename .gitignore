@@ -10,3 +10,4 @@ benchmark.json
 *.log
 *fixture.*.snapshot
 *.CALL_ROLLBACK.snapshot
+*.benchmark.json
