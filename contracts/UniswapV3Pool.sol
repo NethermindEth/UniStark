@@ -907,10 +907,7 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
             if (uint128(fees1) > 0) protocolFees.token1 += uint128(fees1);
             feeGrowthGlobal1X128 += FullMath.mulDiv(paid1 - fees1, FixedPoint128.Q128, _liquidity);
         }
-        
-        
-        // emit Flash(msg.sender, recipient, amount0, amount1, paid0, paid1);
-        
+        emit Flash(msg.sender, recipient, amount0, amount1, paid0, paid1);
         }
     }
 
