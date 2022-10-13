@@ -473,10 +473,8 @@ describe('UniswapV3Pool swap tests', () => {
           await poolFunctions.mint(wallet.address, position.tickLower, position.tickUpper, position.liquidity)
         }
 
-        const [poolBalance0, poolBalance1] = await Promise.all([
-          token0.balanceOf(pool.address),
-          token1.balanceOf(pool.address),
-        ])
+        const poolBalance0 = await token0.balanceOf(pool.address)
+        const poolBalance1 = await token1.balanceOf(pool.address)
 
         return { token0, token1, pool, poolFunctions, poolBalance0, poolBalance1, swapTarget }
       }
@@ -520,21 +518,12 @@ describe('UniswapV3Pool swap tests', () => {
             }).to.matchSnapshot('swap error')
             return
           }
-          const [
-            poolBalance0After,
-            poolBalance1After,
-            slot0After,
-            liquidityAfter,
-            feeGrowthGlobal0X128,
-            feeGrowthGlobal1X128,
-          ] = await Promise.all([
-            token0.balanceOf(pool.address),
-            token1.balanceOf(pool.address),
-            pool.slot0(),
-            pool.liquidity(),
-            pool.feeGrowthGlobal0X128(),
-            pool.feeGrowthGlobal1X128(),
-          ])
+          const poolBalance0After = await token0.balanceOf(pool.address)
+          const poolBalance1After = await token1.balanceOf(pool.address)
+          const slot0After = await pool.slot0()
+          const liquidityAfter = await pool.liquidity()
+          const feeGrowthGlobal0X128 = await pool.feeGrowthGlobal0X128()
+          const feeGrowthGlobal1X128 = await pool.feeGrowthGlobal1X128()
           const poolBalance0Delta = poolBalance0After.sub(poolBalance0)
           const poolBalance1Delta = poolBalance1After.sub(poolBalance1)
 
