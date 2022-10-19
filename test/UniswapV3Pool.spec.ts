@@ -1147,6 +1147,17 @@ describe('UniswapV3Pool', () => {
         MaxUint128
       )
 
+      // const tx = await pool.collect(
+      //   wallet.address,
+      //   minTick,
+      //   maxTick,
+      //   MaxUint128,
+      //   MaxUint128
+      // )
+
+      // await tx.wait();
+
+
       expect(fees0, 'fees owed in token0 are greater than 0').to.be.gte(0)
       expect(fees1, 'fees owed in token1 are greater than 0').to.be.gte(0)
 

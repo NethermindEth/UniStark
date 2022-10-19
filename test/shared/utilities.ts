@@ -156,10 +156,11 @@ export function createPoolFunctions({
         sqrtPriceLimitX96 = MAX_SQRT_RATIO.sub(1)
       }
     }
+    console.log({swapTargetAddress: swapTarget.address})
     await inputToken.approve(swapTarget.address, constants.MaxUint256)
 
     const toAddress = typeof to === 'string' ? to : to.address
-
+    console.log({poolAddress: pool.address, amountIn, amountOut, toAddress, sqrtPriceLimitX96});
     return method(pool.address, exactInput ? amountIn : amountOut, toAddress, sqrtPriceLimitX96)
   }
 
@@ -242,14 +243,16 @@ export function createMultiPoolFunctions({
 }): MultiPoolFunctions {
   async function swapForExact0Multi(amountOut: BigNumberish, to: Wallet | string): Promise<ContractTransaction> {
     const method = swapTarget.swapForExact0Multi
-    await inputToken.approve(swapTarget.address, constants.MaxUint256)
+    const tx = await inputToken.approve(swapTarget.address, constants.MaxUint256)
+    await tx.wait();
     const toAddress = typeof to === 'string' ? to : to.address
     return method(toAddress, poolInput.address, poolOutput.address, amountOut)
   }
 
   async function swapForExact1Multi(amountOut: BigNumberish, to: Wallet | string): Promise<ContractTransaction> {
     const method = swapTarget.swapForExact1Multi
-    await inputToken.approve(swapTarget.address, constants.MaxUint256)
+    const tx = await inputToken.approve(swapTarget.address, constants.MaxUint256)
+    await tx.wait();
     const toAddress = typeof to === 'string' ? to : to.address
     return method(toAddress, poolInput.address, poolOutput.address, amountOut)
   }

@@ -38,20 +38,21 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
     using Position for Position.Info;
     using Oracle for Oracle.Observation[65535];
 
+    uint256 public loopRuns = 0;
     /// @inheritdoc IUniswapV3PoolImmutables
-    address public immutable override factory;
+    address public override factory;
     /// @inheritdoc IUniswapV3PoolImmutables
-    address public immutable override token0;
+    address public override token0;
     /// @inheritdoc IUniswapV3PoolImmutables
-    address public immutable override token1;
+    address public override token1;
     /// @inheritdoc IUniswapV3PoolImmutables
-    uint24 public immutable override fee;
+    uint24 public override fee;
 
     /// @inheritdoc IUniswapV3PoolImmutables
-    int24 public immutable override tickSpacing;
+    int24 public override tickSpacing;
 
     /// @inheritdoc IUniswapV3PoolImmutables
-    uint128 public immutable override maxLiquidityPerTick;
+    uint128 public override maxLiquidityPerTick;
 
     struct Slot0 {
         // the current price
@@ -120,6 +121,15 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
         tickSpacing = _tickSpacing;
 
         maxLiquidityPerTick = Tick.tickSpacingToMaxLiquidityPerTick(_tickSpacing);
+    }
+
+    function setValues(address _token0, address _token1, uint24 _fee, int24 _tickSpacing) external {
+      factory = address(0x0);
+      token0 = _token0;
+      token1 = _token1;
+      fee = _fee;
+      tickSpacing = _tickSpacing;
+      maxLiquidityPerTick = Tick.tickSpacingToMaxLiquidityPerTick(_tickSpacing);
     }
 
     /// @dev Common checks for valid tick inputs.
@@ -653,6 +663,7 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
             });
         // continue swapping as long as we haven't used the entire input/output and haven't reached the price limit
         while (state.amountSpecifiedRemaining != 0 && state.sqrtPriceX96 != sqrtPriceLimitX96) {
+            loopRuns++;
             StepComputations memory step;
 
             step.sqrtPriceStartX96 = state.sqrtPriceX96;
