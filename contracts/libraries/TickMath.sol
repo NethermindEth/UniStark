@@ -298,20 +298,6 @@ library TickMath {
         int24 tickLow = int24((log_sqrt10001 - 3402992956809132418596140100660247210) >> 128);
         int24 tickHi = int24((log_sqrt10001 + 291339464771989622907027621153398088495) >> 128);
 
-<<<<<<< HEAD
-        if (tickLow == tickHi) {
-            tick = tickLow;
-        } else {
-            if (getSqrtRatioAtTick(tickHi) <= sqrtPriceX96) {
-                tick = tickHi;
-            } else {
-                tick = tickLow;
-            }
-        }
-        }
-    }   
-=======
         tick = tickLow == tickHi ? tickLow : getSqrtRatioAtTick(tickHi) <= sqrtPriceX96 ? tickHi : tickLow;
     }
->>>>>>> 1e81dc9 (finish adding conditionals to libraries)
 }
