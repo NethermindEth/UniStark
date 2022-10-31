@@ -44,7 +44,7 @@ Sit back and enjoy the blinking lights.
 3. Clone NethermindEth/hardhat-warp: https://github.com/NethermindEth/hardhat-warp
 - run `yarn tsc`
 4. Create a virtual-env in the UniStark Repo: `python3.9 -m venv ./venv`
-5. Activate the venv an install our modified testnet: pip install git+https://github.com/JorikSchellekens/starknet-devnet
+5. Activate the venv an install our modified testnet: `pip install git+https://github.com/JorikSchellekens/starknet-devnet`
 
 
 ### Transpilation & Testing
