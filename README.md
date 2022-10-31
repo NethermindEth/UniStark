@@ -40,11 +40,13 @@ Sit back and enjoy the blinking lights.
 - `which warp`
 - `warp install`
 
-2. Clone NethermindEth/UniStark Repo: https://github.com/NethermindEth/UniStark
-3. Clone NethermindEth/hardhat-warp: https://github.com/NethermindEth/hardhat-warp
-- run `yarn tsc`
-4. Create a virtual-env in the UniStark Repo: `python3.9 -m venv ./venv`
-5. Activate the venv an install our modified testnet: `pip install git+https://github.com/JorikSchellekens/starknet-devnet`
+2. Clone NethermindEth/hardhat-warp: https://github.com/NethermindEth/hardhat-warp
+- run `yarn` & `yarn tsc` in hardhat-warp
+3. Clone NethermindEth/UniStark Repo: https://github.com/NethermindEth/UniStark
+4. Checkout the `workshop` branch
+5. Create a virtual-env in the UniStark Repo: `python3.9 -m venv ./venv`
+6. Activate the venv an install our modified testnet: `pip install git+https://github.com/JorikSchellekens/starknet-devnet`
+7. run `yarn` in Unistark Repo
 
 
 ### Transpilation & Testing
