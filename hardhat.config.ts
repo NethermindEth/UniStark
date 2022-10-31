@@ -21,7 +21,7 @@ export default {
 
       // venv: "active" <- for the active virtual environment with installed starknet-devnet
       // venv: "path/to/venv" <- for env with installed starknet-devnet (created with e.g. `python -m venv path/to/venv`)
-      venv: "../warp/venv",
+      venv: "./venv",
 
 
       // optional devnet CLI arguments
