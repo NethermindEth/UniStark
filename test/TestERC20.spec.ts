@@ -1,10 +1,7 @@
 import { expect } from './shared/expect'
-import { Wallet } from 'ethers'
 import { TestERC20 } from '../typechain/TestERC20'
 import { ethers, waffle } from 'hardhat'
-import snapshotGasCost from './shared/snapshotGasCost'
 
-const { BigNumber } = ethers
 
 describe('Testing Transfer', () => {
   let erc20: TestERC20
