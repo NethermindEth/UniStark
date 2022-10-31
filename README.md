@@ -57,7 +57,9 @@ Sit back and enjoy the blinking lights.
 - `warp transpile contracts/test/FullMathTest.sol --compile-cairo`
 - `yarn test test/FullMath.spec.ts`
 3. UniSwapV3 SwapTest
-- `warp transpile contracts/test/MockTimeUniSwapV3PoolDeployer.sol --compile-cairo`
+- `warp transpile contracts/UniSwapV3Factory.sol --compile-cairo`
+- `warp transpile contracts/test/TestUniswapV3Callee.sol --compile-cairo`
+- `warp transpile contracts/test/TestUniswapV3Router.sol --compile-cairo`
 - `yarn test test/UniswapV3Pool.swap.spec.ts`
 
 
