@@ -25,30 +25,31 @@ Sit back and enjoy the blinking lights.
 ## Workshop:
 
 ### Agenda
-1. Brief introduction to Warp.
+1. Brief introduction to Warp
 2. Transpiling UniSwap
 3. Testing UniSwap
-4. Installing the HardHat-warp environment.
+4. Installing the HardHat-warp environment
 5. Transpiling ERC20
 -  Test transfers
 6. Transpiling UniSwapV3
-- Test FullMath library, 
-- Test A Swap
+- Test the FullMath library
+- Test a swap
 
 
 ### Installation Steps:
-1. Install Warp for Transpiling the Contracts:
+1. Install python: `sudo apt install python3.9 python3.9-dev python3.9-venv`
+2. Install Warp for Transpiling the Contracts:
 - `yarn global add @nethermindeth/warp`
 - `which warp`
-- `warp install`
+- `warp install --python <path/to/python3.9>`
 
-2. Clone NethermindEth/hardhat-warp: https://github.com/NethermindEth/hardhat-warp
+3. Clone NethermindEth/hardhat-warp: https://github.com/NethermindEth/hardhat-warp
 - run `yarn` & `yarn tsc` in hardhat-warp
-3. Clone NethermindEth/UniStark Repo: https://github.com/NethermindEth/UniStark
-4. Checkout the `workshop` branch
-5. Create a virtual-env in the UniStark Repo: `python3.9 -m venv ./venv`
-6. Activate the venv an install our modified testnet: `pip install git+https://github.com/JorikSchellekens/starknet-devnet`
-7. run `yarn` in Unistark Repo
+4. Clone NethermindEth/UniStark Repo: https://github.com/NethermindEth/UniStark
+5. Checkout the `workshop` branch
+6. Create a virtual-env in the UniStark Repo: `python3.9 -m venv ./venv`
+7. Activate the venv an install our modified testnet: `pip install git+https://github.com/JorikSchellekens/starknet-devnet`
+8. run `yarn` in Unistark Repo
 
 
 ### Transpilation & Testing
