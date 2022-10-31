@@ -26,10 +26,12 @@ Sit back and enjoy the blinking lights.
 
 ### Agenda
 1. Brief introduction to Warp.
-2. Installing the HardHat-warp environment.
-3. Transpiling ERC20
+2. Transpiling UniSwap
+3. Testing UniSwap
+4. Installing the HardHat-warp environment.
+5. Transpiling ERC20
 -  Test transfers
-4. Transpiling UniSwapV3
+6. Transpiling UniSwapV3
 - Test FullMath library, 
 - Test A Swap
 
