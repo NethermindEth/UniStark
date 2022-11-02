@@ -1,7 +1,7 @@
 import bn from 'bignumber.js'
-import { resolve } from 'path';
+import { resolve } from 'path'
 import { BigNumber, BigNumberish, constants, Contract, ContractTransaction, utils, Wallet } from 'ethers'
-import {calculateStarkNetAddress, getContractsToDeclare, normalizeAddress} from 'hardhat-warp/dist/utils';
+import { calculateStarkNetAddress, getContractsToDeclare, normalizeAddress } from 'hardhat-warp/dist/utils'
 import { TestUniswapV3Callee } from '../../typechain/TestUniswapV3Callee'
 import { TestUniswapV3Router } from '../../typechain/TestUniswapV3Router'
 import { MockTimeUniswapV3Pool } from '../../typechain/MockTimeUniswapV3Pool'
@@ -44,20 +44,24 @@ export function getCreate2Address(
 ): string {
   const [token0, token1] = tokenA.toLowerCase() < tokenB.toLowerCase() ? [tokenA, tokenB] : [tokenB, tokenA]
 
-  const args = [BigInt(token0).toString(16).padStart(64, '0'), BigInt(token1).toString(16).padStart(64, '0'),
-  BigInt(fee).toString(16).padStart(64, '0')].join('');
+  const args = [
+    BigInt(token0).toString(16).padStart(64, '0'),
+    BigInt(token1).toString(16).padStart(64, '0'),
+    BigInt(fee).toString(16).padStart(64, '0'),
+  ].join('')
 
-  const salt = utils.keccak256(`0x${args}`).slice(0,-4)
+  const salt = utils.keccak256(`0x${args}`).slice(0, -2)
 
-  const dependencies = getContractsToDeclare(resolve(__dirname, "../../warp_output/contracts/UniswapV3Factory__WC__UniswapV3Factory.cairo"));
+  const dependencies = getContractsToDeclare(
+    resolve(__dirname, '../../warp_output/contracts/UniswapV3Factory__WC__UniswapV3Factory.cairo')
+  )
 
-  const poolClassHash = dependencies["UniswapV3Pool"];
-  if (poolClassHash === undefined) throw new Error("Couldn't find UniswapV3Pool class hash");
+  const poolClassHash = dependencies['UniswapV3Pool']
+  if (poolClassHash === undefined) throw new Error("Couldn't find UniswapV3Pool class hash")
 
-  const address = calculateStarkNetAddress(salt, poolClassHash, '[]', factoryAddress);
+  const address = calculateStarkNetAddress(salt, poolClassHash, '[]', factoryAddress)
 
-  return normalizeAddress("0x" + BigInt(address).toString(16));
-
+  return normalizeAddress('0x' + BigInt(address).toString(16))
 }
 
 bn.config({ EXPONENTIAL_AT: 999999, DECIMAL_PLACES: 40 })
