@@ -47,7 +47,7 @@ export function getCreate2Address(
   const args = [BigInt(token0).toString(16).padStart(64, '0'), BigInt(token1).toString(16).padStart(64, '0'),
   BigInt(fee).toString(16).padStart(64, '0')].join('');
 
-  const salt = utils.keccak256(`0x${args}`).slice(0,-4)
+  const salt = utils.keccak256(`0x${args}`).slice(0,-2);
 
   const dependencies = getContractsToDeclare(resolve(__dirname, "../../warp_output/contracts/UniswapV3Factory.sol/UniswapV3Factory.cairo"));
 
