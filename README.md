@@ -7,11 +7,7 @@ deployment on [StarkNet](https://starknet.io/).
 
 A diff of this repo to Uniswap's original [here](https://htmlpreview.github.io/?https://github.com/NethermindEth/UniStark/blob/main/diff/v3-core.diff.html)
 
-In order to transpile them simply run: 
-```
-yarn global add @nethermindeth/warp@2.3.1
-```
-More detailed instructions on how to install warp can be found [here](https://github.com/NethermindEth/warp/#warp-installation-method-1)
+In order to transpile them simply [install Warp](https://github.com/NethermindEth/warp/#warp-installation-method-1) and then:
 
 ```
 warp transpile contract/UniswapV3Pool.sol
@@ -43,7 +39,7 @@ Sit back and enjoy the blinking lights.
 ### Installation Steps:
 1. Install python: `sudo apt install python3.9 python3.9-dev python3.9-venv`
 2. Install Warp for Transpiling the Contracts:
-- `yarn global add @nethermindeth/warp`
+- `yarn global add @nethermindeth/warp@2.3.1`
 - `which warp`
 - `warp install --python <path/to/python3.9>`
 
