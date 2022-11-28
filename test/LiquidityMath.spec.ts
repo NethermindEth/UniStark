@@ -1,7 +1,6 @@
 import { expect } from './shared/expect'
-import { LiquidityMathTest } from '../typechain/LiquidityMathTest'
+import { LiquidityMathTest } from '../typechain/test/LiquidityMathTest'
 import { ethers, waffle } from 'hardhat'
-import snapshotGasCost from './shared/snapshotGasCost'
 
 const { BigNumber } = ethers
 

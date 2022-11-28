@@ -1,9 +1,8 @@
 import { BigNumber, constants } from 'ethers'
 import { ethers } from 'hardhat'
-import { SqrtPriceMathTest } from '../typechain/SqrtPriceMathTest'
+import { SqrtPriceMathTest } from '../typechain/test/SqrtPriceMathTest'
 
 import { expect } from './shared/expect'
-import snapshotGasCost from './shared/snapshotGasCost'
 import { encodePriceSqrt, expandTo18Decimals, MaxUint128 } from './shared/utilities'
 
 const {
