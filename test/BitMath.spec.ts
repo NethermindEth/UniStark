@@ -39,7 +39,7 @@ describe('BitMath', () => {
     it('0', async () => {
       await expect(bitMath.leastSignificantBit(0)).to.be.reverted
     })
-    it('1', async () => {
+    it.only('1', async () => {
       expect(await bitMath.leastSignificantBit(1)).to.eq(0)
     })
     it('2', async () => {

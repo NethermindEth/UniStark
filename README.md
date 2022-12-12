@@ -1,29 +1,14 @@
-# UniStark (a.k.a Uniswap V3 Warped)
+To recreate the bug you'll need to
 
-This repository contains the core smart contracts for the [Uniswap V3
-Protocol](https://github.com/Uniswap/v3-core) modified for transpilation by 
-[Warp](https://github.com/NethermindEth/warp) to [Cairo](https://starknet.io/docs/hello_cairo/index.html#hello-cairo) for
-deployment on [StarkNet](https://starknet.io/).
-
-A diff of this repo to Uniswap's original [here](https://htmlpreview.github.io/?https://github.com/NethermindEth/UniStark/blob/main/diff/v3-core.diff.html)
-
-In order to transpile them simply [install Warp](https://github.com/NethermindEth/warp/#warp-installation-method-1) and then:
+Have the latest `develop` of `warp`
+`yarn` and `yarn build` `warp`
+Have the latest `warp-compile` branch of `hardhat-warp`
+`yarn` and `yarn build` `hardhat-warp`
+Update the `package.json` of `hardhat-warp` to point to the `warp` directory
+Update the `package.json` of this repo to point to `hardhat-warp`
 
 ```
-warp transpile contract/UniswapV3Pool.sol
+yarn compile
+cp BitMathTest.cairo artifacts/contracts/test/BitMathTest.sol/
+yarn test test/BitMath.spec.ts
 ```
-
-To transpile all of the files:
-```
-warp transpile contract/**/*.sol
-```
-
-Sit back and enjoy the blinkenlights.
-
----
-
-This is a demonstration of Warp's capabilities. Kindly note, this is a
-[Nethermind](https://nethermind.io/) project carried out with no affiliation to Uniswap. All of the
-development and testing implemented in this repo has taken place in accordance
-with the Uniswap Business Source Licence 1.1. and other applicable licences.
-Nethermind does not use Uniswap V3 Core for revenue-generating purposes. 
