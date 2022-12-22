@@ -12,16 +12,16 @@ reporter.config({ hooks: false });
 const port = (Math.floor(Math.random() * 1000) + 5000).toString()
 
 export default {
-  starknet: {
-    network: "integrated-devnet"
-  },
+  // starknet: {
+  //   network: "integrated-devnet"
+  // },
   networks: {
     integratedDevnet: {
-      url: `http://127.0.0.1:${port}`,
+      url: `http://127.0.0.1:5050`,
 
       // venv: "active" <- for the active virtual environment with installed starknet-devnet
       // venv: "path/to/venv" <- for env with installed starknet-devnet (created with e.g. `python -m venv path/to/venv`)
-      venv: "../starknet-devnet/venv/",
+      venv: "./myvenv",
 
 
       // optional devnet CLI arguments
