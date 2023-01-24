@@ -1,11 +1,11 @@
 import { BigNumber } from 'ethers'
 import { ethers } from 'hardhat'
-import { MockTimeUniswapV3Pool } from '../../typechain/MockTimeUniswapV3Pool'
-import { TestERC20 } from '../../typechain/TestERC20'
+import { MockTimeUniswapV3Pool } from '../../typechain/test/MockTimeUniswapV3Pool';
+import { TestERC20 } from '../../typechain/test/TestERC20'
 import { UniswapV3Factory } from '../../typechain/UniswapV3Factory'
-import { TestUniswapV3Callee } from '../../typechain/TestUniswapV3Callee'
-import { TestUniswapV3Router } from '../../typechain/TestUniswapV3Router'
-import { MockTimeUniswapV3PoolDeployer } from '../../typechain/MockTimeUniswapV3PoolDeployer'
+import { TestUniswapV3Callee } from '../../typechain/test/TestUniswapV3Callee'
+import { TestUniswapV3Router } from '../../typechain/test/TestUniswapV3Router'
+import { MockTimeUniswapV3PoolDeployer } from '../../typechain/test/MockTimeUniswapV3PoolDeployer'
 
 import { Fixture } from 'ethereum-waffle'
 

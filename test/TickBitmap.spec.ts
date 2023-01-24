@@ -1,7 +1,6 @@
 import { ethers } from 'hardhat'
-import { TickBitmapTest } from '../typechain/TickBitmapTest'
+import { TickBitmapTest } from '../typechain/test/TickBitmapTest'
 import { expect } from './shared/expect'
-import snapshotGasCost from './shared/snapshotGasCost'
 
 describe('TickBitmap', () => {
   let tickBitmap: TickBitmapTest

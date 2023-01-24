@@ -1,6 +1,6 @@
-import 'hardhat-typechain'
+import '@typechain/hardhat';
 import {freedom} from 'hardhat-warp/src/index_before'
-freedom(require)
+freedom(require);
 import '@nomiclabs/hardhat-ethers'
 import '@nomiclabs/hardhat-waffle'
 import '@nomiclabs/hardhat-etherscan'
@@ -21,7 +21,7 @@ export default {
 
       // venv: "active" <- for the active virtual environment with installed starknet-devnet
       // venv: "path/to/venv" <- for env with installed starknet-devnet (created with e.g. `python -m venv path/to/venv`)
-      venv: "../warp/venv",
+      venv: "../warp/warp_venv/",
 
 
       // optional devnet CLI arguments
@@ -94,5 +94,9 @@ export default {
     timeout: 100000000,
     reporter: 'mocha-progress-reporter'
 
+  },
+  typechain: {
+    outDir: 'typechain',
+    fullRebuild: true,
   }
 }

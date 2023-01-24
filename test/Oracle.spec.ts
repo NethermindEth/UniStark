@@ -1,6 +1,6 @@
 import { BigNumber, BigNumberish, Wallet } from 'ethers'
 import { ethers, waffle } from 'hardhat'
-import { OracleTest } from '../typechain/OracleTest'
+import { OracleTest } from '../typechain/test/OracleTest'
 import checkObservationEquals from './shared/checkObservationEquals'
 import { expect } from './shared/expect'
 import { TEST_POOL_START_TIME } from './shared/fixtures'
@@ -708,31 +708,6 @@ describe('Oracle', () => {
         secondsPerLiquidityCumulativeX128: '33974356747348039873972993881117400879779',
         tickCumulative: '-175890',
       })
-    })
-
-    it('gas cost of observe(0)', async () => {
-      await snapshotGasCost(oracle.getGasCostOfObserve([0]))
-    })
-    it('gas cost of observe(200 * 13)', async () => {
-      await snapshotGasCost(oracle.getGasCostOfObserve([200 + 13]))
-    })
-    it('gas cost of observe(200 * 13 + 5)', async () => {
-      await snapshotGasCost(oracle.getGasCostOfObserve([200 + 13 + 5]))
-    })
-    it('gas cost of observe(0) after 5 seconds', async () => {
-      await oracle.advanceTime(5)
-      await snapshotGasCost(oracle.getGasCostOfObserve([0]))
-    })
-    it('gas cost of observe(5) after 5 seconds', async () => {
-      await oracle.advanceTime(5)
-      await snapshotGasCost(oracle.getGasCostOfObserve([5]))
-    })
-    it('gas cost of observe(oldest)', async () => {
-      await snapshotGasCost(oracle.getGasCostOfObserve([65534 * 13]))
-    })
-    it('gas cost of observe(oldest) after 5 seconds', async () => {
-      await oracle.advanceTime(5)
-      await snapshotGasCost(oracle.getGasCostOfObserve([65534 * 13 + 5]))
     })
   })
 })
