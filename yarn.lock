@@ -1291,6 +1291,11 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
+"@nethermindeth/hardhat-warp@^1.1.6":
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/@nethermindeth/hardhat-warp/-/hardhat-warp-1.1.6.tgz#3fa2a30f7653eb0b735b71f7e339eb33268721cc"
+  integrity sha512-EOTnGz40yu5VtD0wRs5niSCfHwWK6SQRueN5ApuDeD4y4g43mv13cyk9Znz3apesoAFoWuL1YSwnUWQ2t5gXDg==
+
 "@noble/hashes@1.1.2":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.1.2.tgz#e9e035b9b166ca0af657a7848eb2718f0f22f183"
@@ -3900,10 +3905,6 @@ har-validator@~5.1.3:
   dependencies:
     ajv "^6.12.3"
     har-schema "^2.0.0"
-
-"hardhat-warp@link:../hardhat-warp":
-  version "0.0.0"
-  uid ""
 
 hardhat@^2.2.0:
   version "2.2.0"

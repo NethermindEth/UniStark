@@ -5,8 +5,8 @@ node_modules/
 typechain/
 typechain-types/
 dist/
-warp_output/
 benchmark.json
+venv/
 *.log
 *fixture.*.snapshot
 *.CALL_ROLLBACK.snapshot

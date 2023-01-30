@@ -1,6 +1,4 @@
 import '@typechain/hardhat';
-import {freedom} from 'hardhat-warp/src/index_before'
-freedom(require);
 import '@nomiclabs/hardhat-ethers'
 import '@nomiclabs/hardhat-waffle'
 import '@nomiclabs/hardhat-etherscan'
@@ -21,14 +19,14 @@ export default {
 
       // venv: "active" <- for the active virtual environment with installed starknet-devnet
       // venv: "path/to/venv" <- for env with installed starknet-devnet (created with e.g. `python -m venv path/to/venv`)
-      venv: "../warp/warp_venv/",
+      venv: "./venv",
 
 
       // optional devnet CLI arguments
       args: ["--seed", "0", "--timeout", "10000"],
 
       // stdout: "logs/stdout.log" <- dumps stdout to the file
-      stdout: `.${port}.log`, // <- logs stdout to the terminal
+      stdout: `.${port}.log`,
       // stderr: "logs/stderr.log" <- dumps stderr to the file
       stderr: "STDERR"  // <- logs stderr to the terminal
     },
