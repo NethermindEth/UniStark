@@ -1,7 +1,7 @@
 import bn from 'bignumber.js'
 import { resolve } from 'path';
 import { BigNumber, BigNumberish, constants, Contract, ContractTransaction, utils, Wallet } from 'ethers'
-import {calculateStarkNetAddress, getContractsToDeclare, normalizeAddress} from 'hardhat-warp/dist/utils';
+import {calculateStarkNetAddress, getContractsToDeclare, normalizeAddress} from '../../../../src/utils';
 import { TestUniswapV3Callee } from '../../typechain/test/TestUniswapV3Callee'
 import { TestUniswapV3Router } from '../../typechain/test/TestUniswapV3Router'
 import { MockTimeUniswapV3Pool } from '../../typechain/test/MockTimeUniswapV3Pool'

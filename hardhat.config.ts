@@ -2,7 +2,7 @@ import '@typechain/hardhat';
 import '@nomiclabs/hardhat-ethers'
 import '@nomiclabs/hardhat-waffle'
 import '@nomiclabs/hardhat-etherscan'
-import 'hardhat-warp'
+import '../../src/index'
 
 import 'mocha-progress-reporter';
 reporter.config({ hooks: false });
@@ -19,7 +19,7 @@ export default {
 
       // venv: "active" <- for the active virtual environment with installed starknet-devnet
       // venv: "path/to/venv" <- for env with installed starknet-devnet (created with e.g. `python -m venv path/to/venv`)
-      venv: "./venv",
+      venv: "/Users/rohit/nmd",
 
 
       // optional devnet CLI arguments
@@ -28,7 +28,7 @@ export default {
       // stdout: "logs/stdout.log" <- dumps stdout to the file
       stdout: `.${port}.log`,
       // stderr: "logs/stderr.log" <- dumps stderr to the file
-      stderr: "STDERR"  // <- logs stderr to the terminal
+      stderr: `.${port}.err.log`  // <- logs stderr to the terminal
     },
 
     hardhat: {
