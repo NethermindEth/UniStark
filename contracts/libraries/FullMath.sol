@@ -11,6 +11,19 @@ library FullMath {
     /// @param denominator The divisor
     /// @return result The 256-bit result
     /// @dev Credit to Remco Bloemen under MIT license https://xn--2-umb.com/21/muldiv
+    
+    ///warp-cairo
+    ///func CURRENTFUNC(){range_check_ptr: felt}(a: Uint256, b: Uint256, denominator: Uint256) -> (result: Uint256){
+    ///    from starkware.cairo.common.uint256 import uint256_mul_div_mod
+    ///    from starkware.cairo.common.math import assert_not_zero
+    ///    if (denominator.low == 0) {
+    ///        assert_not_zero(denominator.high);
+    ///    }
+    ///    let (quotientLow, quotientHigh, _,) = uint256_mul_div_mod(a, b, denominator);
+    ///    assert quotientHigh.low = 0;
+    ///    assert quotientHigh.high = 0;
+    ///    return (quotientLow,);
+    ///}
     function mulDiv(
         uint256 a,
         uint256 b,
