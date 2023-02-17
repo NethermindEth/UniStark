@@ -49,9 +49,8 @@ export function getCreate2Address(
 
   const salt = utils.keccak256(`0x${args}`).slice(0,-2);
 
-  const dependencies = getContractsToDeclare(resolve(__dirname, "../../warp_output/contracts/UniswapV3Factory.sol/UniswapV3Factory.cairo"));
-
-  const poolClassHash = dependencies["UniswapV3Pool"];
+  const dependencies = getContractsToDeclare(resolve(__dirname, "../../artifacts/contracts/UniswapV3Factory.sol/UniswapV3Factory.cairo"));
+  const poolClassHash = dependencies["contracts/UniswapV3Pool.sol/UniswapV3Pool"];
   if (poolClassHash === undefined) throw new Error("Couldn't find UniswapV3Pool class hash");
 
   const address = calculateStarkNetAddress(salt, poolClassHash, '[]', factoryAddress);
